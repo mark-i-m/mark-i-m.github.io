@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>os1</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="nav-container-outer">
+    <div id="nav-container">
+        <a href="index.html">os1</a>
+        <span class="nav-separator"></span>
+        <a href="implementation.html">Implementation</a>
+        <span class="nav-separator"></span>
+        <a href="#">Rust Docs</a>
+    </div>
+</div>
+<div id="body-container">
+
+##About
+
+A simple 32-bit x86 operating system written from scratch in Rust.
+
+I had originally intended not to have any library code in my kernel at all, but
+this is not possible with Rust. As a result I am linking in `libcore` and
+`liballoc` which contain the heart of Rust functionality. Special thanks to
+Krzysztof for helping me get that set up!
+
+###Features so far
+* Heap manager
+* Preemptive multitasking
+* VGA buffer management
+* Reaper and Idle processes
+* Concurrency Control (via Semaphores)
+* Virtual Memory
+
+###TODO
+* File system
+* User mode/system calls
+* Process resources
+    - Finish native semaphore implementation
+* Shared typed data structures
+
+###Requirements
+
+* ```qemu```
+* ```gcc```
+* rust 1.6 (2015-11-08 nightly)
+
+  You need to have nightly Rust (not Beta or release) because the project uses some
+  unstable language features, such as `libcore`.
+
+  ```bash
+  curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly --date=2015-11-08
+  ```
+
+###Build instructions
+
+* ```git clone https://github.com/mark-i-m/os1.git```
+* ```cd os1/```
+* ```git submodule init && git submodule update```
+* ```make rungraphic```
+
+###Thanks to
+- Krzysztof Drewniak for build system and help
+- AG for bootloader code, inspiration, and advice
+- OSDev wiki for general helpfulness
+
+
+##Implementation
+
+###Booting
+The OS uses a simple bootloader in the MBR of the disk. It was not designed for
+compatibility; I haven't tested it on any other VM software, other than QEMU.
+
+The bootloader does a few things, in this order:
+
+1. Disable interrupts
+2. Print an 'x' to the console (in QEMU, this is represented in the serial
+   console, not the VGA display)
+3. Find drive c and copy its contents into memory starting `loadKernelHere`,
+   which is defined in `mbr.S`
+4. If the kernel is longer 64KB (I think), the BIOS instruction used to copy the
+   kernel to memory returns an error and only copies the first 64KB. This caused
+   very arcane, hard-to-trace errors later on, so instead, if the kernel is
+   longer than 64KB, the bootloader prints 'e' and hangs. This could be easily
+   fixed by writing a better bootloader, but I want to do more interesting
+   things.
+5. Do a long jump to start the kernel.
+
+All of this is defined in `mbr.S`. `mbr.S` also defines the GDT, IDT, TSS
+table descriptor, and the various segments. These variables are global and can
+be used elsewhere in the OS source.
+
+###Kernel startup
+The `kernel_main` function in `lib.rs` is the Rust entry point of the kernel; it
+is the first Rust code to run. The function initialized kernel subsystems in the
+following order:
+
+1. Initialize the kernel heap manager
+2. Initialize physical memory management
+3. Create the init and idle processes
+4. Initialize the PIC
+5. Initialize the PIT
+6. Start the init process
+
+Starting the init process accomplishes a few things. First, it turns on interrupts
+for the first time. Second, it turns on virtual memory for the first time. Third, 
+it is the first real process to run in the system, allowing it to spawn other
+processes.
+
+###Processes and Scheduling
+Processes have a
+
+* Unique 32-bit PID
+* Rust string representing the name (not necessarily unique, but it helps with
+  debugging)
+* 2048-word kernel-mode stack allocated on the kernel heap (this stack is not used
+  when the process is in user-mode)
+* Context struct representing the context at which the process was interrupted
+  (only valid if the process is NOT running)
+* AddressSpace struct with a pointer to that process's page directory
+* A function pointer to the process's routine (specified at process creation)
+
+Unfortunately, because processes are allocated on the kernel heap, Rust wil not
+allow them to use closures instead of function pointers. It would be nice if we
+could have each process contain a dynamically bound call using the `FnOnce` trait
+(essentially a thunk), but `FnOnce`'s `call` method moves the `FnOnce` out of the
+process, which is not allowed because process is heap allocated and has a 
+destructor. There is an open RFC about the Box<FnBox> constuct, which would allow
+the desired behavior, but it is not working yet. If this RFC was implemented, we
+would be able to create processes like so:
+
+```rust
+let resource = Arc::new(Semaphore::new(foo));
+let r = resource.clone();
+process::make_ready(Process::new("bar_proc", move |this| {
+    println!("{:?} says {}", this, r.down());
+}));
+```
+
+Processes are round-robin scheduled, according to the order in which 
+`process::make_ready` is called. A process can yield the rest of its quantum by
+calling `process::proc_yield`. os1 uses preemptive multiprocessing based on the
+PIT. This is largely invisible from the point of view of processes, though.
+
+###Kernel Memory
+
+From the point of view of the kernel, memory is split up into 3 sections. The first
+megabyte of memory consists of the kernel code, the vga buffer, and various
+constants. The next 3MB of memory contain the kernel heap. The following 4MB of
+memory contain the mappable physical memory frames. These first 8MB of memory are
+direct mapped for convenience. So far, only 8MB of physical memory are actually used.
+I plan to improve this so that all of physical memory is available.
+
+####Heap
+The kernel heap is used for kernel data structures only; when a process switches to
+user-mode, its heap and stack are mapped to physical memory frames via page tables.
+The kernel heap is a first-fit heap implementation with block coalescing and splitting.
+In my implementation, each free block has a 3-word header consisting of the size of the
+block and forward and backward pointers to other free blocks, along with some flags. 
+Each block has a footer than consists only of the size of the block.
+
+Because the Rust compiler is the only entity making calls to allocate or free memory,
+less sanity checking and metadata is necessary than normal. This allows some
+simplifying assumptions and gives the heap implementation some nice properties that
+are not often possible in C:
+
+* Used blocks have no metadata at all. The compiler makes calls to `free`, passing in
+  the size of the block in addition to a pointer to the block. This means that we always
+  know as much information as we need to add a block to the free list and find the
+  next block to merge with it if it is free. The compiler guarantees that calls to free
+  will only be for legitimate used blocks.
+* All blocks are an exact multiple of 4*WORD_SIZE in size.
+* All blocks are (4*WORD_SIZE)-byte-aligned.
+
+This allows for easy sanity checking and alignment guarantees, while there is also no
+overhead for metadata.
+
+####Physical memory
+At the moment, the 4MB of frames that are direct mapped are all the physical memory
+available for use by processes. This will be fixed soon.
+
+###Concurrency
+TODO
+
+###Display driver
+TODO
+</div>
+</body>
+</html>
