@@ -75,32 +75,41 @@
     </ol>
     </p>
 
+    <p>
     Starting the init process accomplishes a few things. First, it turns on interrupts
     for the first time. Second, it turns on virtual memory for the first time. Third,
     it is the first real process to run in the system, allowing it to spawn other
     processes.
+    </p>
 
-    ###Processes and Scheduling
+    <h1>Processes and Scheduling</h1>
+
+    <p>
     Processes have a
 
-    * Unique 32-bit PID
-    * Rust string representing the name (not necessarily unique, but it helps with
-    debugging)
-    * 2048-word kernel-mode stack allocated on the kernel heap (this stack is not used
-    when the process is in user-mode)
-    * Context struct representing the context at which the process was interrupted
-    (only valid if the process is NOT running)
-    * AddressSpace struct with a pointer to that process's page directory
-    * A function pointer to the process's routine (specified at process creation)
+    <ul>
+        <li>Unique 32-bit PID</li>
+        <li>Rust string representing the name (not necessarily unique, but it helps with
+        debugging)</li>
+        <li>2048-word kernel-mode stack allocated on the kernel heap (this stack is not used
+        when the process is in user-mode)</li>
+        <li>Context struct representing the context at which the process was interrupted
+        (only valid if the process is NOT running)</li>
+        <li>AddressSpace struct with a pointer to that process's page directory</li>
+        <li>A function pointer to the process's routine (specified at process creation)</li>
+    </ul>
+    </p>
 
+    <p>
     Unfortunately, because processes are allocated on the kernel heap, Rust wil not
     allow them to use closures instead of function pointers. It would be nice if we
-    could have each process contain a dynamically bound call using the `FnOnce` trait
-    (essentially a thunk), but `FnOnce`'s `call` method moves the `FnOnce` out of the
+    could have each process contain a dynamically bound call using the <code>FnOnce</code> trait
+    (essentially a thunk), but <code>FnOnce</code>'s <code>call</code> method moves the <code>FnOnce</code> out of the
     process, which is not allowed because process is heap allocated and has a
-    destructor. There is an open RFC about the Box<FnBox> constuct, which would allow
+    destructor. There is an open RFC about the <code>Box<FnBox></code> constuct, which would allow
     the desired behavior, but it is not working yet. If this RFC was implemented, we
     would be able to create processes like so:
+    </p>
 
     <pre><code class="language-rust">
     let resource = Arc::new(Semaphore::new(foo));
@@ -110,53 +119,77 @@
     }));
     </code></pre>
 
+    <p>
     Processes are round-robin scheduled, according to the order in which
-    `process::make_ready` is called. A process can yield the rest of its quantum by
-    calling `process::proc_yield`. os1 uses preemptive multiprocessing based on the
+    <code>process::make_ready</code> is called. A process can yield the rest of its quantum by
+    calling <code>process::proc_yield</code>. os1 uses preemptive multiprocessing based on the
     PIT. This is largely invisible from the point of view of processes, though.
+    </p>
 
-    ###Kernel Memory
+    <h1>Kernel Memory</h1>
 
+    <p>
     From the point of view of the kernel, memory is split up into 3 sections. The first
     megabyte of memory consists of the kernel code, the vga buffer, and various
     constants. The next 3MB of memory contain the kernel heap. The following 4MB of
     memory contain the mappable physical memory frames. These first 8MB of memory are
     direct mapped for convenience. So far, only 8MB of physical memory are actually used.
     I plan to improve this so that all of physical memory is available.
+    </p>
 
-    ####Heap
+    <h2>Heap</h2>
+
+    <p>
     The kernel heap is used for kernel data structures only; when a process switches to
     user-mode, its heap and stack are mapped to physical memory frames via page tables.
     The kernel heap is a first-fit heap implementation with block coalescing and splitting.
     In my implementation, each free block has a 3-word header consisting of the size of the
     block and forward and backward pointers to other free blocks, along with some flags.
     Each block has a footer than consists only of the size of the block.
+    </p>
 
+    <p>
     Because the Rust compiler is the only entity making calls to allocate or free memory,
     less sanity checking and metadata is necessary than normal. This allows some
     simplifying assumptions and gives the heap implementation some nice properties that
     are not often possible in C:
 
-    * Used blocks have no metadata at all. The compiler makes calls to `free`, passing in
-    the size of the block in addition to a pointer to the block. This means that we always
-    know as much information as we need to add a block to the free list and find the
-    next block to merge with it if it is free. The compiler guarantees that calls to free
-    will only be for legitimate used blocks.
-    * All blocks are an exact multiple of 4*WORD_SIZE in size.
-    * All blocks are (4*WORD_SIZE)-byte-aligned.
+    <ul>
+        <li>
+        Used blocks have no metadata at all. The compiler makes calls to <code>free</code>, passing in
+        the size of the block in addition to a pointer to the block. This means that we always
+        know as much information as we need to add a block to the free list and find the
+        next block to merge with it if it is free. The compiler guarantees that calls to free
+        will only be for legitimate used blocks.
+        </li>
+        <li>All blocks are an exact multiple of <code>4*WORD_SIZE</code> in size.</li>
+        <li>All blocks are <code>(4*WORD_SIZE)</code>-byte-aligned.</li>
+    </ul>
+    </p>
 
+    <p>
     This allows for easy sanity checking and alignment guarantees, while there is also no
     overhead for metadata.
+    </p>
 
-    ####Physical memory
+    <h2>Physical memory</h2>
+
+    <p>
     At the moment, the 4MB of frames that are direct mapped are all the physical memory
     available for use by processes. This will be fixed soon.
+    </p>
 
-    ###Concurrency
-    TODO
+    <h1>Concurrency</h1>
 
-    ###Display driver
+    <p>
     TODO
+    </p>
+
+    <h1>Display driver</h1>
+
+    <p>
+    TODO
+    </p>
 </div>
 </body>
 </html>
