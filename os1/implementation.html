@@ -23,8 +23,9 @@
 
     <h1>Booting</h1>
     <p>
-    The OS uses a simple bootloader in the MBR of the disk. It was not designed for
-    compatibility; I haven't tested it on any other VM software, other than QEMU.
+    The OS uses a simple bootloader in the MBR of the disk. It was not designed
+    for compatibility; I haven't tested it on any other VM software, other than
+    QEMU.
     </p>
 
     <p>
@@ -37,33 +38,37 @@
         console, not the VGA display)
         </li>
         <li>
-        Find drive c and copy its contents into memory starting <code>loadKernelHere</code>,
-        which is defined in <code>mbr.S</code>
+        Find drive c and copy its contents into memory starting
+        <code>loadKernelHere</code>, which is defined in <code>mbr.S</code>
         </li>
         <li>
-        If the kernel is longer 64KB (I think), the BIOS instruction used to copy the
-        kernel to memory returns an error and only copies the first 64KB. This caused
-        very arcane, hard-to-trace errors later on, so instead, if the kernel is
-        longer than 64KB, the bootloader prints 'e' and hangs. This could be easily
-        fixed by writing a better bootloader, but I want to do more interesting
-        things.
+        If the kernel is longer 64KB (I think), the BIOS instruction used to
+        copy the kernel to memory returns an error and only copies the first
+        64KB. This caused very arcane, hard-to-trace errors later on, so
+        instead, if the kernel is longer than 64KB, the bootloader prints 'e'
+        and hangs. This could be easily fixed by writing a better bootloader,
+        but I want to do more interesting things.
+        </li>
+        <li>
+        Exectute the E820 BIOS call to get a map of available and reserved
+        physical memory regions.
         </li>
         <li>Do a long jump to start the kernel.</li>
     </ol>
     </p>
 
     <p>
-    All of this is defined in <code>mbr.S</code>. <code>mbr.S</code> also defines the GDT, IDT, TSS
-    table descriptor, and the various segments. These variables are global and can
-    be used elsewhere in the OS source.
+    All of this is defined in <code>mbr.S</code>. <code>mbr.S</code> also
+    defines the GDT, IDT, TSS table descriptor, and the various segments. These
+    variables are global and can be used elsewhere in the OS source.
     </p>
 
     <h1>Kernel startup</h1>
 
     <p>
-    The <code>kernel_main</code> function in <code>lib.rs</code> is the Rust entry point of the kernel; it
-    is the first Rust code to run. The function initialized kernel subsystems in the
-    following order:
+    The <code>kernel_main</code> function in <code>lib.rs</code> is the Rust
+    entry point of the kernel; it is the first Rust code to run. The function
+    initialized kernel subsystems in the following order:
 
     <ol>
         <li>Initialize the kernel heap manager</li>
@@ -76,10 +81,10 @@
     </p>
 
     <p>
-    Starting the init process accomplishes a few things. First, it turns on interrupts
-    for the first time. Second, it turns on virtual memory for the first time. Third,
-    it is the first real process to run in the system, allowing it to spawn other
-    processes.
+    Starting the init process accomplishes a few things. First, it turns on
+    interrupts for the first time. Second, it turns on virtual memory for the
+    first time. Third, it is the first real process to run in the system,
+    allowing it to spawn other processes.
     </p>
 
     <h1>Processes and Scheduling</h1>
@@ -89,26 +94,29 @@
 
     <ul>
         <li>Unique 32-bit PID</li>
-        <li>Rust string representing the name (not necessarily unique, but it helps with
-        debugging)</li>
-        <li>2048-word kernel-mode stack allocated on the kernel heap (this stack is not used
-        when the process is in user-mode)</li>
-        <li>Context struct representing the context at which the process was interrupted
-        (only valid if the process is NOT running)</li>
-        <li>AddressSpace struct with a pointer to that process's page directory</li>
-        <li>A function pointer to the process's routine (specified at process creation)</li>
+        <li>Rust string representing the name (not necessarily unique, but it
+        helps with debugging)</li>
+        <li>2048-word kernel-mode stack allocated on the kernel heap (this stack
+        is not used when the process is in user-mode)</li>
+        <li>Context struct representing the context at which the process was
+        interrupted (only valid if the process is NOT running)</li>
+        <li>AddressSpace struct with a pointer to that process's page
+        directory</li>
+        <li>A function pointer to the process's routine (specified at process
+        creation)</li>
     </ul>
     </p>
 
     <p>
-    Unfortunately, because processes are allocated on the kernel heap, Rust wil not
-    allow them to use closures instead of function pointers. It would be nice if we
-    could have each process contain a dynamically bound call using the <code>FnOnce</code> trait
-    (essentially a thunk), but <code>FnOnce</code>'s <code>call</code> method moves the <code>FnOnce</code> out of the
-    process, which is not allowed because process is heap allocated and has a
-    destructor. There is an open RFC about the <code>Box<FnBox></code> constuct, which would allow
-    the desired behavior, but it is not working yet. If this RFC was implemented, we
-    would be able to create processes like so:
+    Unfortunately, because processes are allocated on the kernel heap, Rust will
+    not allow them to use closures instead of function pointers. It would be
+    nice if we could have each process contain a dynamically bound call using
+    the <code>FnOnce</code> trait (essentially a thunk), but
+    <code>FnOnce</code>'s <code>call</code> method moves the <code>FnOnce</code>
+    out of the process, which is not allowed because process is heap allocated
+    and has a destructor. There is an open RFC about the <code>Box<FnBox></code>
+    constuct, which would allow the desired behavior, but it is not working yet.
+    If this RFC was implemented, we would be able to create processes like so:
     </p>
 
     <pre><code class="language-rust">
@@ -121,62 +129,110 @@
 
     <p>
     Processes are round-robin scheduled, according to the order in which
-    <code>process::make_ready</code> is called. A process can yield the rest of its quantum by
-    calling <code>process::proc_yield</code>. os1 uses preemptive multiprocessing based on the
-    PIT. This is largely invisible from the point of view of processes, though.
+    <code>process::make_ready</code> is called. A process can yield the rest of
+    its quantum by calling <code>process::proc_yield</code>. os1 uses preemptive
+    multiprocessing based on the PIT. This is largely invisible from the point
+    of view of processes, though.
     </p>
 
-    <h1>Kernel Memory</h1>
+    <h1>Memory</h1>
 
     <p>
-    From the point of view of the kernel, memory is split up into 3 sections. The first
-    megabyte of memory consists of the kernel code, the vga buffer, and various
-    constants. The next 3MB of memory contain the kernel heap. The following 4MB of
-    memory contain the mappable physical memory frames. These first 8MB of memory are
-    direct mapped for convenience. So far, only 8MB of physical memory are actually used.
-    I plan to improve this so that all of physical memory is available.
+    From the point of view of the kernel, memory is split up into 3 sections.
+    The first megabyte of memory consists of the kernel code, the vga buffer,
+    and various constants. The next 3MiB of memory contain the kernel heap. The
+    following 4MiB of memory contain the physical frame data structures (more
+    later). These first 8MiB of memory are direct mapped for convenience. The
+    next 8MiB of the virtual address space is mapped to the page directory.
+    Finally, the next MiB of the virtual address space is reserved for the
+    kernel to map as needed. The rest of the virtual address space is available
+    in user mode.
     </p>
 
     <h2>Heap</h2>
 
     <p>
-    The kernel heap is used for kernel data structures only; when a process switches to
-    user-mode, its heap and stack are mapped to physical memory frames via page tables.
-    The kernel heap is a first-fit heap implementation with block coalescing and splitting.
-    In my implementation, each free block has a 3-word header consisting of the size of the
-    block and forward and backward pointers to other free blocks, along with some flags.
-    Each block has a footer than consists only of the size of the block.
+    The kernel heap is used for kernel data structures only; when a process
+    switches to user-mode, its heap and stack are mapped to physical memory
+    frames via page tables.  The kernel heap is a first-fit heap implementation
+    with block coalescing and splitting.  In my implementation, each free block
+    has a 3-word header consisting of the size of the block and forward and
+    backward pointers to other free blocks, along with some flags.  Each block
+    has a footer than consists only of the size of the block.
     </p>
 
     <p>
-    Because the Rust compiler is the only entity making calls to allocate or free memory,
-    less sanity checking and metadata is necessary than normal. This allows some
-    simplifying assumptions and gives the heap implementation some nice properties that
-    are not often possible in C:
+    Because the Rust compiler is the only entity making calls to allocate or
+    free memory, less sanity checking and metadata is necessary than normal.
+    This allows some simplifying assumptions and gives the heap implementation
+    some nice properties that are not often possible in C:
 
     <ul>
         <li>
-        Used blocks have no metadata at all. The compiler makes calls to <code>free</code>, passing in
-        the size of the block in addition to a pointer to the block. This means that we always
-        know as much information as we need to add a block to the free list and find the
-        next block to merge with it if it is free. The compiler guarantees that calls to free
+        Used blocks have no metadata at all. The compiler makes calls to
+        <code>free</code>, passing in the size of the block in addition to a
+        pointer to the block. This means that we always know as much information
+        as we need to add a block to the free list and find the next block to
+        merge with it if it is free. The compiler guarantees that calls to free
         will only be for legitimate used blocks.
         </li>
-        <li>All blocks are an exact multiple of <code>4*WORD_SIZE</code> in size.</li>
+        <li>All blocks are an exact multiple of <code>4*WORD_SIZE</code> in
+        size.</li>
         <li>All blocks are <code>(4*WORD_SIZE)</code>-byte-aligned.</li>
     </ul>
     </p>
 
     <p>
-    This allows for easy sanity checking and alignment guarantees, while there is also no
-    overhead for metadata.
+    This allows for easy sanity checking and alignment guarantees, while there
+    is also no overhead for metadata.
     </p>
 
     <h2>Physical memory</h2>
 
     <p>
-    At the moment, the 4MB of frames that are direct mapped are all the physical memory
-    available for use by processes. This will be fixed soon.
+    The kernel only reserves the first 8MiB of physical memory for its own use.
+    Using the E820 memory map obtained at boot, the physical memory allocator
+    initializes its data structures at startup. Each physical frame in upto 4GiB
+    of memory has a 1-word descriptor (<code>struct FrameInfo</code>).  If a
+    frame is free, this descriptor is used to keep the index of the next free
+    frame, so that all free frames are described by the LIFO list formed by all
+    of the descriptors.
+    </p>
+
+    <p>
+    A frame is allocated by removing its <code>FrameInfo</code> from the free
+    list, and conversely, a frame is freed by adding its <code>FrameInfo</code>
+    to the list. When a frame is allocated, its <code>FrameInfo</code> is used
+    to hold a pointer to a data structure describing all pages in all processes
+    that are mapped to that frame.
+    </p>
+
+    <h2>Virtual Memory</h2>
+
+    <p>
+    The virtual address space of a process consists of all addresses for
+    <code>0xD0_0000-0xFFFF_FFFF</code>.  When a page fault occurs (in kernel or
+    user mode), if the faulting address is in this range, the fault is
+    considered an error, and the process is killed. This is because the first
+    8MiB are shared, direct-mapped memory and should never produce a page fault.
+    The next 4MiB are mapped to the processes page directory, so if there is a
+    fault in this range, it is fatal, since it means the paging structures have
+    been corrupt. The 13MiB is claimed by the kernel for use by the
+    <code>kmap</code> function, which temporarily maps a page meant to reside in
+    another process's address space. This is needed for creating a new process.
+    Luckly, with Rust, segfaults should be extremely rare.
+    </p>
+
+    <p>
+    When a page fault occurs for a legal address, the fault handler checks the
+    following cases:
+
+    <ol>
+        <li>Is the page paged out to disk? If so, swap it back in</li>
+        <li>Is the page marked present but read-only? If so, this page is COW,
+        so clone it and mark the new page read/write</li>
+        <li>Else, allocate a new frame a map the page to it</li>
+    </ol>
     </p>
 
     <h1>Concurrency</h1>
