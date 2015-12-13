@@ -8,7 +8,7 @@ body {
 }
 
 a, a:hover, a:focus, a:visited {
-    color: inherit;
+    color: #0080ff;
     text-decoration: none;
 }
 
@@ -39,6 +39,7 @@ a, a:hover, a:focus, a:visited {
     display: inline-block;
     margin: 10px 0px;
 
+    color: inherit;
     font-size: 20px;
 }
 
