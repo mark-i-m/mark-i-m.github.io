@@ -21,55 +21,59 @@
 </div>
 <div id="body-container">
 
-    <pre><code class="language-rust">
-    pub fn main () {
-        do_something();
-    }
-    </code></pre>
-
-    <br />
-    <br />
-    <br />
-
-
-
-
-    ##Implementation
-
-    ###Booting
+    <h1>Booting</h1>
+    <p>
     The OS uses a simple bootloader in the MBR of the disk. It was not designed for
     compatibility; I haven't tested it on any other VM software, other than QEMU.
+    </p>
 
+    <p>
     The bootloader does a few things, in this order:
 
-    1. Disable interrupts
-    2. Print an 'x' to the console (in QEMU, this is represented in the serial
-    console, not the VGA display)
-    3. Find drive c and copy its contents into memory starting `loadKernelHere`,
-    which is defined in `mbr.S`
-    4. If the kernel is longer 64KB (I think), the BIOS instruction used to copy the
-    kernel to memory returns an error and only copies the first 64KB. This caused
-    very arcane, hard-to-trace errors later on, so instead, if the kernel is
-    longer than 64KB, the bootloader prints 'e' and hangs. This could be easily
-    fixed by writing a better bootloader, but I want to do more interesting
-    things.
-    5. Do a long jump to start the kernel.
+    <ol>
+        <li>Disable interrupts</li>
+        <li>
+        Print an 'x' to the console (in QEMU, this is represented in the serial
+        console, not the VGA display)
+        </li>
+        <li>
+        Find drive c and copy its contents into memory starting <code>loadKernelHere</code>,
+        which is defined in <code>mbr.S</code>
+        </li>
+        <li>
+        If the kernel is longer 64KB (I think), the BIOS instruction used to copy the
+        kernel to memory returns an error and only copies the first 64KB. This caused
+        very arcane, hard-to-trace errors later on, so instead, if the kernel is
+        longer than 64KB, the bootloader prints 'e' and hangs. This could be easily
+        fixed by writing a better bootloader, but I want to do more interesting
+        things.
+        </li>
+        <li>Do a long jump to start the kernel.</li>
+    </ol>
+    </p>
 
-    All of this is defined in `mbr.S`. `mbr.S` also defines the GDT, IDT, TSS
+    <p>
+    All of this is defined in <code>mbr.S</code>. <code>mbr.S</code> also defines the GDT, IDT, TSS
     table descriptor, and the various segments. These variables are global and can
     be used elsewhere in the OS source.
+    </p>
 
-    ###Kernel startup
-    The `kernel_main` function in `lib.rs` is the Rust entry point of the kernel; it
+    <h1>Kernel startup</h1>
+
+    <p>
+    The <code>kernel_main</code> function in <code>lib.rs</code> is the Rust entry point of the kernel; it
     is the first Rust code to run. The function initialized kernel subsystems in the
     following order:
 
-    1. Initialize the kernel heap manager
-    2. Initialize physical memory management
-    3. Create the init and idle processes
-    4. Initialize the PIC
-    5. Initialize the PIT
-    6. Start the init process
+    <ol>
+        <li>Initialize the kernel heap manager</li>
+        <li>Initialize physical memory management</li>
+        <li>Create the init and idle processes</li>
+        <li>Initialize the PIC</li>
+        <li>Initialize the PIT</li>
+        <li>Start the init process</li>
+    </ol>
+    </p>
 
     Starting the init process accomplishes a few things. First, it turns on interrupts
     for the first time. Second, it turns on virtual memory for the first time. Third,
@@ -98,13 +102,13 @@
     the desired behavior, but it is not working yet. If this RFC was implemented, we
     would be able to create processes like so:
 
-    ```rust
+    <pre><code class="language-rust">
     let resource = Arc::new(Semaphore::new(foo));
     let r = resource.clone();
     process::make_ready(Process::new("bar_proc", move |this| {
-    println!("{:?} says {}", this, r.down());
+        println!("{:?} says {}", this, r.down());
     }));
-    ```
+    </code></pre>
 
     Processes are round-robin scheduled, according to the order in which
     `process::make_ready` is called. A process can yield the rest of its quantum by

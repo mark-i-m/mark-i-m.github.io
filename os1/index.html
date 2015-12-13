@@ -3,11 +3,6 @@
 <head>
 <title>os1</title>
 <link rel="stylesheet" href="style.css" />
-<style>
-pre {
-    display: inline;
-}
-</style>
 </head>
 <body>
 <div id="nav-container-outer">
@@ -66,15 +61,15 @@ pre {
     Requirements:
 
     <ul>
-        <li><pre>qemu</pre></li>
-        <li><pre>gcc</pre></li>
+        <li><code>qemu</code></li>
+        <li><code>gcc</code></li>
         <li>
         rust 1.6 (2015-11-08 nightly)<br /><br />
 
         You need to have nightly Rust (not Beta or release) because the project uses some
-        unstable language features, such as <pre>libcore</pre>.<br /><br />
+        unstable language features, such as <code>libcore</code>.<br /><br />
 
-        <pre>curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly --date=2015-11-08</pre>
+        <code>curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly --date=2015-11-08</code>
         </li>
     </ul>
     </p>
@@ -83,10 +78,10 @@ pre {
     Build instructions
 
     <ol>
-        <li><pre>git clone https://github.com/mark-i-m/os1.git</pre></li>
-        <li><pre>cd os1/</pre></li>
-        <li><pre>git submodule init && git submodule update</pre></li>
-        <li><pre>make rungraphic</pre></li>
+        <li><code>git clone https://github.com/mark-i-m/os1.git</code></li>
+        <li><code>cd os1/</code></li>
+        <li><code>git submodule init && git submodule update</code></li>
+        <li><code>make rungraphic</code></li>
     </ol>
     </p>
 
