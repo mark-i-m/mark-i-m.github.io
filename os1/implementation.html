@@ -237,9 +237,52 @@
 
     <h1>Concurrency</h1>
 
+    os1 uses preemptive multiprocessing via interrupts. os1 has two options for
+    concurrency control (so far). The first is to simply turn off interrupts.
+    The second is to use a semaphore.
+
+    <h2>Interrupts</h2>
+
     <p>
-    TODO
+    Turning off interrupts is only an option in kernel mode. It is the option
+    of last resort. In some cases, it is unavoidable, such as code for context
+    switching. When I turn on SMP, a spin lock will also be required in places
+    where turning off interrupts was used.
     </p>
+
+    <h2>Semaphores</h2>
+
+    <p>
+    os1 has semaphore implementation based on Rust's <code>Mutex</code> type.
+    The <code>Semaphore<T></code> type
+    only has a <code>clone</code> method, signifying that the process would like
+    to acquire the resource. This returns a RAII <code>SemaphoreGuard</code>.
+    When the guard's lifetime ends, the resource is automatically released.
+    </p>
+
+    <p>
+    Like Rust's native <code>Mutex</code> (which unfortunately cannot be
+    used because it lives in <code>libstd</code> and relies on libc), the
+    <code>Semaphore</code> takes ownership of the data it protects. Thus, Rust
+    will prevent illegal or unsafe accesses to the data at compile time.
+    </p>
+
+    <p>
+    Semaphores are available via a system call to user processes. I haven't
+    decided how this will look yet in user mode. In kernel mode, it looks
+    something like this:
+    </p>
+
+    <pre><code class="language-rust">
+    // wrap resource in a semaphore with initial count 3
+    let s = Semaphore::new(resource, 3);
+
+    {
+        // acquire
+        let guard = s.clone();
+    }
+    // guard dies => release
+    </code></pre>
 
     <h1>Display driver</h1>
 
