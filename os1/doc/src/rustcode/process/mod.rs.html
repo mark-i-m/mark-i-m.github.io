@@ -334,6 +334,10 @@
 <span id="292">292</span>
 <span id="293">293</span>
 <span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for process management</span>
 
@@ -353,7 +357,7 @@
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>machine</span>::{<span class='self'>self</span>, <span class='ident'>context_switch</span>};
 
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>memory</span>::<span class='ident'>AddressSpace</span>;
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>memory</span>::{<span class='ident'>AddressSpace</span>, <span class='ident'>esp0</span>};
 
 <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>context</span>::{<span class='ident'>KContext</span>};
 
@@ -583,6 +587,10 @@
 
     <span class='comment'>// switch address spaces</span>
     (<span class='op'>*</span><span class='ident'>next</span>).<span class='ident'>addr_space</span>.<span class='ident'>activate</span>();
+
+    <span class='comment'>// switch stacks</span>
+    <span class='comment'>// TODO: turn this on</span>
+    <span class='comment'>//esp0((*CURRENT_PROCESS).stack + STACK_SIZE*4);</span>
 
     <span class='comment'>// set the CURRENT_PROCESS</span>
     <span class='ident'>CURRENT_PROCESS</span> <span class='op'>=</span> <span class='ident'>next</span>;

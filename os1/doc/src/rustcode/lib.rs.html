@@ -115,8 +115,6 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! The os1 kernel is written and compiled as a library. It is then</span>
 <span class='doccomment'>//! compiled and linked together with assembly files to produce a binary.</span>
@@ -172,9 +170,7 @@
     <span class='comment'>// Start initing stuff                             //</span>
     <span class='comment'>/////////////////////////////////////////////////////</span>
 
-    <span class='comment'>// TODO: tss</span>
-
-    <span class='comment'>// init heap and vm</span>
+    <span class='comment'>// init tss, heap, and vm</span>
     <span class='ident'>memory</span>::<span class='ident'>init</span>();
 
     <span class='comment'>// init processes</span>
