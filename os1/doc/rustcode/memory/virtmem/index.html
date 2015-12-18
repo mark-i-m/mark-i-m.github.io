@@ -45,15 +45,35 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-492' class='srclink' href='../../../src/rustcode/memory/virtmem.rs.html#3-435' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+        </span><a id='src-492' class='srclink' href='../../../src/rustcode/memory/virtmem.rs.html#1-474' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>A module for virtual memory management
+The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.
+When a page fault occurs (in kernel or user mode), if the faulting address is in this range,
+the fault is considered an error, and the process is killed. This is because the first 8MiB are
+shared, direct-mapped memory and should never produce a page fault. The next 4MiB are mapped to
+the processes page directory, so if there is a fault in this range, it is fatal, since it means
+the paging structures have been corrupt. The 13MiB is claimed by the kernel for use by the kmap
+function, which temporarily maps a page meant to reside in another process&#39;s address space.
+This is needed for creating a new process. Luckly, with Rust, segfaults should be extremely
+rare.</p>
+
+<p>When a page fault occurs for a legal address, the fault handler checks the following cases:</p>
+
+<ol>
+<li>Is the page paged out to disk? If so, swap it back in</li>
+<li>Is the page marked present but read-only? If so, this page is COW, so clone it and mark the
+new page read/write</li>
+<li>Else, allocate a new frame a map the page to it</li>
+</ol>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::ops::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>};</code></td></tr><tr><td><code>use core::intrinsics::<a class='fn' href='https://doc.rust-lang.org/nightly/core/intrinsics/fn.transmute.html' title='core::intrinsics::transmute'>transmute</a>;</code></td></tr><tr><td><code>use super::physmem::<a class='struct' href='../../../rustcode/memory/physmem/struct.Frame.html' title='rustcode::memory::physmem::Frame'>Frame</a>;</code></td></tr><tr><td><code>use super::super::machine::{<a class='fn' href='../../../rustcode/machine/fn.invlpg.html' title='rustcode::machine::invlpg'>invlpg</a>, <a class='fn' href='../../../rustcode/machine/fn.vmm_on.html' title='rustcode::machine::vmm_on'>vmm_on</a>, <a class='fn' href='../../../rustcode/machine/fn.page_fault_handler.html' title='rustcode::machine::page_fault_handler'>page_fault_handler</a>};</code></td></tr><tr><td><code>use super::super::interrupts::{<a class='fn' href='../../../rustcode/interrupts/fn.add_trap_handler.html' title='rustcode::interrupts::add_trap_handler'>add_trap_handler</a>, <a class='fn' href='../../../rustcode/interrupts/fn.on.html' title='rustcode::interrupts::on'>on</a>, <a class='fn' href='../../../rustcode/interrupts/fn.off.html' title='rustcode::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::super::process::CURRENT_PROCESS;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='struct' href='struct.AddressSpace.html'
                                title='rustcode::memory::virtmem::AddressSpace'>AddressSpace</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The address space of a single process</p>
+
                         </td>
                     </tr>
                 
@@ -61,7 +81,9 @@
                         <td><a class='struct' href='struct.PagingEntry.html'
                                title='rustcode::memory::virtmem::PagingEntry'>PagingEntry</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A single entry in a page directory or table
+<code>31 12 9 0 [ 000 flags ]</code></p>
+
                         </td>
                     </tr>
                 
@@ -69,7 +91,8 @@
                         <td><a class='struct' href='struct.VMTable.html'
                                title='rustcode::memory::virtmem::VMTable'>VMTable</a></td>
                         <td class='docblock short'>
-                             
+                             <p>An abstraction of page directories and page tables</p>
+
                         </td>
                     </tr>
                 </table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
@@ -78,7 +101,8 @@
                         <td><a class='static' href='static.PDE0.html'
                                title='rustcode::memory::virtmem::PDE0'>PDE0</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Shared PDE #0: direct mapping the first 4MiB</p>
+
                         </td>
                     </tr>
                 
@@ -86,7 +110,8 @@
                         <td><a class='static' href='static.PDE1.html'
                                title='rustcode::memory::virtmem::PDE1'>PDE1</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Shared PDE #1: direct mapping the second 4MiB</p>
+
                         </td>
                     </tr>
                 
@@ -94,7 +119,8 @@
                         <td><a class='static' href='static.VMM_ON.html'
                                title='rustcode::memory::virtmem::VMM_ON'>VMM_ON</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Is VM on?</p>
+
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -103,7 +129,9 @@
                         <td><a class='fn' href='fn.init.html'
                                title='rustcode::memory::virtmem::init'>init</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Initialize virtual memory management but do not turn on VM.
+This creates the two shared page tables that map the first 8MiB.</p>
+
                         </td>
                     </tr>
                 
@@ -111,7 +139,8 @@
                         <td><a class='fn' href='fn.vmm_page_fault.html'
                                title='rustcode::memory::virtmem::vmm_page_fault'>vmm_page_fault</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The Rust-side code of the page fault handler.</p>
+
                         </td>
                     </tr>
                 </table></section>

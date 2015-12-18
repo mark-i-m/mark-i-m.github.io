@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["C1",""],["C2",""],["D1",""],["D2",""],["FIRST_IDT",""]],"fn":[["init",""],["pic_eoi",""],["pic_irq",""]]});
+initSidebarItems({"constant":[["C1","Command port for PIC1"],["C2","Command port for PIC2"],["D1","Data port for PIC1"],["D2","Data port for PIC2"],["FIRST_IDT","First IRQ number allowed for registering handlers"]],"fn":[["init","Initialize the PIC, but leave interrupts disabled"],["pic_eoi","End of interrupt: send the next irq, but interrupts still disabled"],["pic_irq","Rust-side IRQ handling code"]]});

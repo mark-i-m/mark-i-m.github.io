@@ -46,7 +46,11 @@
                 [<span class='inner'>&#x2212;</span>]
             </a>
         </span><a id='src-184' class='srclink' href='../../../src/rustcode/memory/rust_alloc.rs.html#1-109' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<div class='docblock'><p>This file contains the outside interface with the kernels memory allocator.
+rustc will look for these functions.</p>
+
+<p>The comments below are copied from the rust src code</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use super::heap::{<a class='fn' href='../../../rustcode/memory/heap/fn.malloc.html' title='rustcode::memory::heap::malloc'>malloc</a>, <a class='fn' href='../../../rustcode/memory/heap/fn.free.html' title='rustcode::memory::heap::free'>free</a>, <a class='fn' href='../../../rustcode/memory/heap/fn.usable_size.html' title='rustcode::memory::heap::usable_size'>usable_size</a>, <a class='fn' href='../../../rustcode/memory/heap/fn.print_stats.html' title='rustcode::memory::heap::print_stats'>print_stats</a>};</code></td></tr><tr><td><code>use super::super::interrupts::{<a class='fn' href='../../../rustcode/interrupts/fn.on.html' title='rustcode::interrupts::on'>on</a>, <a class='fn' href='../../../rustcode/interrupts/fn.off.html' title='rustcode::interrupts::off'>off</a>};</code></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                     <tr class=' module-item'>

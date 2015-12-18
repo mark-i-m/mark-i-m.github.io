@@ -72,17 +72,29 @@
 <span id="30">30</span>
 <span id="31">31</span>
 <span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
 </pre><pre class='rust '>
-<span class='comment'>// The programmable interrupt timer</span>
+<span class='doccomment'>//! A module for the programmable interrupt timer</span>
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::<span class='ident'>pit_do_init</span>;
 
+<span class='doccomment'>/// Max frequency of the PIT</span>
 <span class='kw'>const</span> <span class='ident'>FREQ</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>1193182</span>;
+
+<span class='doccomment'>/// The frequency of the PIT</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>hz</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
 
+<span class='doccomment'>/// The number of jiffies passed since boot</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>JIFFIES</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
 
+<span class='doccomment'>/// Initialize the PIT to the given frequency</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>(<span class='ident'>pit_hz</span>: <span class='ident'>usize</span>) {
      <span class='kw'>let</span> <span class='ident'>d</span> <span class='op'>=</span> <span class='ident'>FREQ</span> <span class='op'>/</span> <span class='ident'>pit_hz</span>;
 
@@ -97,10 +109,12 @@
      }
 }
 
+<span class='doccomment'>/// Handle a PIT interrupt. Increments `JIFFIES`</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>handler</span>() {
     <span class='kw'>unsafe</span> {<span class='ident'>JIFFIES</span> <span class='op'>+=</span> <span class='number'>1</span>;}
 }
 
+<span class='doccomment'>/// Calculate the number of seconds since boot</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>seconds</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
     <span class='kw'>unsafe</span> {<span class='ident'>JIFFIES</span> <span class='op'>/</span> <span class='ident'>hz</span>}

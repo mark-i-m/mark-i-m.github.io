@@ -45,15 +45,21 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-867' class='srclink' href='../../src/rustcode/process/mod.rs.html#49-55' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-867' class='srclink' href='../../src/rustcode/process/mod.rs.html#46-57' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>enum State {
     INIT,
     READY,
     RUNNING,
     BLOCKED,
     TERMINATED,
-}</pre><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.INIT'><code>INIT</code></td><td></td></tr><tr><td id='variant.READY'><code>READY</code></td><td></td></tr><tr><td id='variant.RUNNING'><code>RUNNING</code></td><td></td></tr><tr><td id='variant.BLOCKED'><code>BLOCKED</code></td><td></td></tr><tr><td id='variant.TERMINATED'><code>TERMINATED</code></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a></code></h4>
+}</pre><div class='docblock'><p>An enum representing the possible states of a process</p>
+</div><h2 class='variants'>Variants</h2>
+<table><tr><td id='variant.INIT'><code>INIT</code></td><td><div class='docblock'><p>Process is created, but not ready</p>
+</div></td></tr><tr><td id='variant.READY'><code>READY</code></td><td><div class='docblock'><p>Process is in the ready q</p>
+</div></td></tr><tr><td id='variant.RUNNING'><code>RUNNING</code></td><td><div class='docblock'><p>Process is running (not on the ready q or blocked)</p>
+</div></td></tr><tr><td id='variant.BLOCKED'><code>BLOCKED</code></td><td><div class='docblock'><p>Process is blocked on a q</p>
+</div></td></tr><tr><td id='variant.TERMINATED'><code>TERMINATED</code></td><td><div class='docblock'><p>Process has died</p>
+</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a></code></h4>
 <h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>

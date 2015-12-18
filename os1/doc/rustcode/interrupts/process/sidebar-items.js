@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["end_irq",""],["off",""],["on",""],["start_irq",""]]});
+initSidebarItems({"fn":[["end_irq","Helper method for use in IRQ Bookkeeping to end an irq"],["off","Turn interrupts off"],["on","Turn interrupts on"],["start_irq","Helper method for use in IRQ Bookkeeping to start an irq. This should never happen if there is no current process."]]});

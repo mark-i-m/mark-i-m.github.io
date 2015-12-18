@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["FREQ",""]],"fn":[["handler",""],["init",""],["seconds",""]],"static":[["JIFFIES",""],["hz",""]]});
+initSidebarItems({"constant":[["FREQ","Max frequency of the PIT"]],"fn":[["handler","Handle a PIT interrupt. Increments `JIFFIES`"],["init","Initialize the PIT to the given frequency"],["seconds","Calculate the number of seconds since boot"]],"static":[["JIFFIES","The number of jiffies passed since boot"],["hz","The frequency of the PIT"]]});

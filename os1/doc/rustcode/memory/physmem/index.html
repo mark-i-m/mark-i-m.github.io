@@ -45,15 +45,17 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-412' class='srclink' href='../../../src/rustcode/memory/physmem.rs.html#3-191' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+        </span><a id='src-412' class='srclink' href='../../../src/rustcode/memory/physmem.rs.html#1-202' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Physical memory management</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::ops::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>};</code></td></tr><tr><td><code>use super::super::interrupts::{<a class='fn' href='../../../rustcode/interrupts/fn.on.html' title='rustcode::interrupts::on'>on</a>, <a class='fn' href='../../../rustcode/interrupts/fn.off.html' title='rustcode::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::regionmap::<a class='struct' href='../../../rustcode/memory/regionmap/struct.RegionMap.html' title='rustcode::memory::regionmap::RegionMap'>RegionMap</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='struct' href='struct.Frame.html'
                                title='rustcode::memory::physmem::Frame'>Frame</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A physical memory frame</p>
+
                         </td>
                     </tr>
                 
@@ -61,7 +63,13 @@
                         <td><a class='struct' href='struct.FrameInfo.html'
                                title='rustcode::memory::physmem::FrameInfo'>FrameInfo</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Frame info
+```
+When free
+31                 20           0
+[nnnnnnnnnnnnnnnnnnnn           1]
+ <sup>--</sup> next free index            <sup>--</sup> free bit</p>
+
                         </td>
                     </tr>
                 
@@ -69,7 +77,9 @@
                         <td><a class='struct' href='struct.FrameInfoSection.html'
                                title='rustcode::memory::physmem::FrameInfoSection'>FrameInfoSection</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Should take up 4MiB on a 32-bit machine.
+There is one frame info for each frame, associated by frame index</p>
+
                         </td>
                     </tr>
                 </table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
@@ -78,7 +88,9 @@
                         <td><a class='static' href='static.FRAME_INFO.html'
                                title='rustcode::memory::physmem::FRAME_INFO'>FRAME_INFO</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Array of <code>FrameInfo</code>. This is a pointer to the region of memory used
+to hold physical memory allocation metadata.</p>
+
                         </td>
                     </tr>
                 
@@ -86,7 +98,9 @@
                         <td><a class='static' href='static.FREE_FRAMES.html'
                                title='rustcode::memory::physmem::FREE_FRAMES'>FREE_FRAMES</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The index of the first free frame in a LIFO list.
+0 =&gt; empty list</p>
+
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -95,7 +109,9 @@
                         <td><a class='fn' href='fn.init.html'
                                title='rustcode::memory::physmem::init'>init</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Initialize physical memory frames using the rest of physical memory.
+This function detects all available physical memory.</p>
+
                         </td>
                     </tr>
                 </table></section>

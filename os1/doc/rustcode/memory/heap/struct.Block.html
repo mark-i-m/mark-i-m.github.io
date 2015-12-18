@@ -45,29 +45,67 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-226' class='srclink' href='../../../src/rustcode/memory/heap.rs.html#46' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>struct Block;</pre><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h3><div class='impl-items'><h4 id='method.get_head' class='method'><code>unsafe fn <a href='#method.get_head' class='fnname'>get_head</a>(&amp;self) -&gt; usize</code></h4>
-<h4 id='method.set_head' class='method'><code>unsafe fn <a href='#method.set_head' class='fnname'>set_head</a>(&amp;mut self, head: usize)</code></h4>
-<h4 id='method.get_foot' class='method'><code>unsafe fn <a href='#method.get_foot' class='fnname'>get_foot</a>(&amp;self) -&gt; usize</code></h4>
-<h4 id='method.set_foot' class='method'><code>unsafe fn <a href='#method.set_foot' class='fnname'>set_foot</a>(&amp;mut self, foot: usize)</code></h4>
-<h4 id='method.get_free_bits' class='method'><code>unsafe fn <a href='#method.get_free_bits' class='fnname'>get_free_bits</a>(&amp;self) -&gt; u8</code></h4>
-<h4 id='method.set_next' class='method'><code>unsafe fn <a href='#method.set_next' class='fnname'>set_next</a>(&amp;mut self, next: *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a>)</code></h4>
-<h4 id='method.set_prev' class='method'><code>unsafe fn <a href='#method.set_prev' class='fnname'>set_prev</a>(&amp;mut self, prev: *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a>)</code></h4>
-<h4 id='method.is_free' class='method'><code>unsafe fn <a href='#method.is_free' class='fnname'>is_free</a>(&amp;self) -&gt; bool</code></h4>
-<h4 id='method.mark_free' class='method'><code>unsafe fn <a href='#method.mark_free' class='fnname'>mark_free</a>(&amp;mut self)</code></h4>
-<h4 id='method.mark_used' class='method'><code>unsafe fn <a href='#method.mark_used' class='fnname'>mark_used</a>(&amp;mut self)</code></h4>
-<h4 id='method.get_size' class='method'><code>unsafe fn <a href='#method.get_size' class='fnname'>get_size</a>(&amp;self) -&gt; usize</code></h4>
-<h4 id='method.set_size' class='method'><code>unsafe fn <a href='#method.set_size' class='fnname'>set_size</a>(&amp;mut self, size: usize)</code></h4>
-<h4 id='method.get_contiguous_next' class='method'><code>unsafe fn <a href='#method.get_contiguous_next' class='fnname'>get_contiguous_next</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
-<h4 id='method.get_contiguous_prev' class='method'><code>unsafe fn <a href='#method.get_contiguous_prev' class='fnname'>get_contiguous_prev</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
-<h4 id='method.get_free_next' class='method'><code>unsafe fn <a href='#method.get_free_next' class='fnname'>get_free_next</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
-<h4 id='method.get_free_prev' class='method'><code>unsafe fn <a href='#method.get_free_prev' class='fnname'>get_free_prev</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
-<h4 id='method.remove' class='method'><code>unsafe fn <a href='#method.remove' class='fnname'>remove</a>(&amp;mut self)</code></h4>
-<h4 id='method.insert' class='method'><code>unsafe fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self)</code></h4>
-<h4 id='method.merge_with_next' class='method'><code>unsafe fn <a href='#method.merge_with_next' class='fnname'>merge_with_next</a>(&amp;mut self)</code></h4>
-<h4 id='method.split' class='method'><code>unsafe fn <a href='#method.split' class='fnname'>split</a>(&amp;mut self, size: usize)</code></h4>
-<h4 id='method.is_match' class='method'><code>unsafe fn <a href='#method.is_match' class='fnname'>is_match</a>(&amp;self, size: usize, align: usize) -&gt; (bool, usize)</code></h4>
-</div></section>
+        </span><a id='src-226' class='srclink' href='../../../src/rustcode/memory/heap.rs.html#63' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>struct Block;</pre><div class='docblock'><p>A struct representing a heap block.</p>
+
+<p>It is empty because, by nature, heap blocks are variable size. Rather thsn give the compiler
+a hard time, we can just a block fixed size and write methods that are aware of the situation.
+Then, we just need to cast an address into a block pointer. This is a very C-ish solution,
+but it makes life easy because a heap implementation usually has a lot of pointer arithmetic.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h3><div class='impl-items'><h4 id='method.get_head' class='method'><code>unsafe fn <a href='#method.get_head' class='fnname'>get_head</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Returns the first word of the block, which will contain the size if this is a free block</p>
+</div><h4 id='method.set_head' class='method'><code>unsafe fn <a href='#method.set_head' class='fnname'>set_head</a>(&amp;mut self, head: usize)</code></h4>
+<div class='docblock'><p>Sets the header to the given value</p>
+</div><h4 id='method.get_foot' class='method'><code>unsafe fn <a href='#method.get_foot' class='fnname'>get_foot</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Returns the last word of the block, which will contain the size if this is a free block</p>
+</div><h4 id='method.set_foot' class='method'><code>unsafe fn <a href='#method.set_foot' class='fnname'>set_foot</a>(&amp;mut self, foot: usize)</code></h4>
+<div class='docblock'><p>Sets the footer to the given value</p>
+</div><h4 id='method.get_free_bits' class='method'><code>unsafe fn <a href='#method.get_free_bits' class='fnname'>get_free_bits</a>(&amp;self) -&gt; u8</code></h4>
+<div class='docblock'><p>Gets the 4 free bits of the block</p>
+</div><h4 id='method.set_next' class='method'><code>unsafe fn <a href='#method.set_next' class='fnname'>set_next</a>(&amp;mut self, next: *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a>)</code></h4>
+<div class='docblock'><p>Set the forward pointer (but not the free bits)</p>
+</div><h4 id='method.set_prev' class='method'><code>unsafe fn <a href='#method.set_prev' class='fnname'>set_prev</a>(&amp;mut self, prev: *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a>)</code></h4>
+<div class='docblock'><p>Set the backward pointer</p>
+</div><h4 id='method.is_free' class='method'><code>unsafe fn <a href='#method.is_free' class='fnname'>is_free</a>(&amp;self) -&gt; bool</code></h4>
+<div class='docblock'><p>Returns true if the block is a valid free block.
+This method does a lot of sanity checiking</p>
+</div><h4 id='method.mark_free' class='method'><code>unsafe fn <a href='#method.mark_free' class='fnname'>mark_free</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Set the free bits</p>
+</div><h4 id='method.mark_used' class='method'><code>unsafe fn <a href='#method.mark_used' class='fnname'>mark_used</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Clear the free bits.
+The block should already be removed from the free list</p>
+</div><h4 id='method.get_size' class='method'><code>unsafe fn <a href='#method.get_size' class='fnname'>get_size</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Return the size of the block (user-usable data size)</p>
+</div><h4 id='method.set_size' class='method'><code>unsafe fn <a href='#method.set_size' class='fnname'>set_size</a>(&amp;mut self, size: usize)</code></h4>
+<div class='docblock'><p>Set the size of block</p>
+</div><h4 id='method.get_contiguous_next' class='method'><code>unsafe fn <a href='#method.get_contiguous_next' class='fnname'>get_contiguous_next</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the heap block immediately following this one</p>
+</div><h4 id='method.get_contiguous_prev' class='method'><code>unsafe fn <a href='#method.get_contiguous_prev' class='fnname'>get_contiguous_prev</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the heap block immediately preceding this one
+or null if there is no valid previous block.</p>
+</div><h4 id='method.get_free_next' class='method'><code>unsafe fn <a href='#method.get_free_next' class='fnname'>get_free_next</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the forward ptr of the block (excluding the free bits)</p>
+</div><h4 id='method.get_free_prev' class='method'><code>unsafe fn <a href='#method.get_free_prev' class='fnname'>get_free_prev</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../rustcode/memory/heap/struct.Block.html' title='rustcode::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the backward ptr of the block</p>
+</div><h4 id='method.remove' class='method'><code>unsafe fn <a href='#method.remove' class='fnname'>remove</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Remove from free list. Clear forward/backward pointers</p>
+</div><h4 id='method.insert' class='method'><code>unsafe fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Add to head of free list</p>
+</div><h4 id='method.merge_with_next' class='method'><code>unsafe fn <a href='#method.merge_with_next' class='fnname'>merge_with_next</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Merge this block with the next block.
+Removes the second block from the free list before merging</p>
+</div><h4 id='method.split' class='method'><code>unsafe fn <a href='#method.split' class='fnname'>split</a>(&amp;mut self, size: usize)</code></h4>
+<div class='docblock'><p>Split the block so that it is the given size.
+Insert the new block into the free list.
+The block must be large enough to split (<code>&gt;= 2*BLOCK_ALIGN</code>).
+The block must be free.
+The new size must be a multiple of <code>BLOCK_ALIGN</code>.</p>
+</div><h4 id='method.is_match' class='method'><code>unsafe fn <a href='#method.is_match' class='fnname'>is_match</a>(&amp;self, size: usize, align: usize) -&gt; (bool, usize)</code></h4>
+<div class='docblock'><p>Returns true if this block matches the size and alignment.
+Returns the size at which the block should be split to obtain
+an aligned block; the second return value is meaningless if
+we return false.</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

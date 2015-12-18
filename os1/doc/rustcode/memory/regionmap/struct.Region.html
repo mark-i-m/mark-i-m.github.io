@@ -45,22 +45,31 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-657' class='srclink' href='../../../src/rustcode/memory/regionmap.rs.html#26-31' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-657' class='srclink' href='../../../src/rustcode/memory/regionmap.rs.html#30-35' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>struct Region {
     start: usize,
     end: usize,
     usable: bool,
     next: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='struct' href='../../../rustcode/memory/regionmap/struct.Region.html' title='rustcode::memory::regionmap::Region'>Region</a>&gt;&gt;,
-}</pre><h2 class='fields'>Fields</h2>
+}</pre><div class='docblock'><p>Represents a region of memory</p>
+</div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
                                   <td id='structfield.start'><code>start</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.end'><code>end</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.usable'><code>usable</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.next'><code>next</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../rustcode/memory/regionmap/struct.Region.html' title='rustcode::memory::regionmap::Region'>Region</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(start: usize) -&gt; <a class='struct' href='../../../rustcode/memory/regionmap/struct.Region.html' title='rustcode::memory::regionmap::Region'>Region</a></code></h4>
-<h4 id='method.find' class='method'><code>fn <a href='#method.find' class='fnname'>find</a>(addr: usize) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;(usize, usize)&gt;</code></h4>
-<h4 id='method.find_next' class='method'><code>fn <a href='#method.find_next' class='fnname'>find_next</a>(addr: usize) -&gt; usize</code></h4>
-<h4 id='method.dump' class='method'><code>fn <a href='#method.dump' class='fnname'>dump</a>(&amp;self)</code></h4>
-</div></section>
+<div class='docblock'><p>Recursively create regions and return a chain
+that stretches from <code>start</code> to the end of the 32-bit addr space.
+Each iteration is O(n), but it doesn&#39;t matter much because n &lt; 2*20</p>
+</div><h4 id='method.find' class='method'><code>fn <a href='#method.find' class='fnname'>find</a>(addr: usize) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;(usize, usize)&gt;</code></h4>
+<div class='docblock'><p>Find the length and type of the most restrictive
+mapping for <code>addr</code> based on the E820 BIOS call</p>
+</div><h4 id='method.find_next' class='method'><code>fn <a href='#method.find_next' class='fnname'>find_next</a>(addr: usize) -&gt; usize</code></h4>
+<div class='docblock'><p>Find the beginning address of the next region of memory
+based on the E820 BIOS call</p>
+</div><h4 id='method.dump' class='method'><code>fn <a href='#method.dump' class='fnname'>dump</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Recursively print mappings. Used for debugging</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

@@ -45,20 +45,36 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-503' class='srclink' href='../../../src/rustcode/memory/virtmem.rs.html#23-29' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-503' class='srclink' href='../../../src/rustcode/memory/virtmem.rs.html#41-47' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct AddressSpace {
     page_dir: usize,
     kmap_index: u8,
-}</pre><h2 class='fields'>Fields</h2>
+}</pre><div class='docblock'><p>The address space of a single process</p>
+</div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
                                   <td id='structfield.page_dir'><code>page_dir</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.kmap_index'><code>kmap_index</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../rustcode/memory/struct.AddressSpace.html' title='rustcode::memory::AddressSpace'>AddressSpace</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../../rustcode/memory/struct.AddressSpace.html' title='rustcode::memory::AddressSpace'>AddressSpace</a></code></h4>
-<h4 id='method.map' class='method'><code>fn <a href='#method.map' class='fnname'>map</a>(&amp;mut self, phys: usize, virt: usize)</code></h4>
-<h4 id='method.kmap' class='method'><code>fn <a href='#method.kmap' class='fnname'>kmap</a>(&amp;mut self, paddr: usize) -&gt; &amp;mut <a class='struct' href='../../../rustcode/memory/physmem/struct.Frame.html' title='rustcode::memory::physmem::Frame'>Frame</a></code></h4>
-<h4 id='method.unmap' class='method'><code>fn <a href='#method.unmap' class='fnname'>unmap</a>(&amp;mut self, virt: usize)</code></h4>
-<h4 id='method.activate' class='method'><code>fn <a href='#method.activate' class='fnname'>activate</a>(&amp;mut self)</code></h4>
-<h4 id='method.clear' class='method'><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self)</code></h4>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../../rustcode/memory/struct.AddressSpace.html' title='rustcode::memory::AddressSpace'>AddressSpace</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Create a new address space. Each address space has the first
+8MiB direct mapped. The next 4MiB is mapped to the page directory</p>
+</div><h4 id='method.map' class='method'><code>fn <a href='#method.map' class='fnname'>map</a>(&amp;mut self, phys: usize, virt: usize)</code></h4>
+<div class='docblock'><p>Map <code>virt</code> to <code>phys</code> in the address space.
+NOTE: should only be called on the current address space
+because it assumes that the PD is at 0x802000</p>
+</div><h4 id='method.kmap' class='method'><code>fn <a href='#method.kmap' class='fnname'>kmap</a>(&amp;mut self, paddr: usize) -&gt; &amp;mut <a class='struct' href='../../../rustcode/memory/physmem/struct.Frame.html' title='rustcode::memory::physmem::Frame'>Frame</a></code></h4>
+<div class='docblock'><p>Map the given <code>paddr</code> for temporary use by the kernel and return a mut reference to the
+frame.
+NOTE: should only be called on the current address space because it assumes that the PD is
+at 0x802000</p>
+</div><h4 id='method.unmap' class='method'><code>fn <a href='#method.unmap' class='fnname'>unmap</a>(&amp;mut self, virt: usize)</code></h4>
+<div class='docblock'><p>Remove any mapping for this virtual address
+NOTE: should only be called on the current address space because it assumes that the PD is
+at 0x802000</p>
+</div><h4 id='method.activate' class='method'><code>fn <a href='#method.activate' class='fnname'>activate</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Activate the current address space and turn on VM if needed</p>
+</div><h4 id='method.clear' class='method'><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Remove all non-kernel mappings in this address space.
+NOTE: must run while this address space is active</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../../rustcode/memory/struct.AddressSpace.html' title='rustcode::memory::AddressSpace'>AddressSpace</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 

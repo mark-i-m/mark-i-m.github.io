@@ -45,15 +45,18 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1168' class='srclink' href='../../../src/rustcode/interrupts/process.rs.html#3-62' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+        </span><a id='src-1168' class='srclink' href='../../../src/rustcode/interrupts/process.rs.html#1-62' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Module for cleanly turning interrupts on and off</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use super::super::process::{CURRENT_PROCESS};</code></td></tr><tr><td><code>use super::super::machine::{<a class='fn' href='../../../rustcode/machine/fn.cli.html' title='rustcode::machine::cli'>cli</a>, <a class='fn' href='../../../rustcode/machine/fn.sti.html' title='rustcode::machine::sti'>sti</a>};</code></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='fn' href='fn.end_irq.html'
                                title='rustcode::interrupts::process::end_irq'>end_irq</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Helper method for use in IRQ
+Bookkeeping to end an irq</p>
+
                         </td>
                     </tr>
                 
@@ -61,7 +64,8 @@
                         <td><a class='fn' href='fn.off.html'
                                title='rustcode::interrupts::process::off'>off</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Turn interrupts off</p>
+
                         </td>
                     </tr>
                 
@@ -69,7 +73,8 @@
                         <td><a class='fn' href='fn.on.html'
                                title='rustcode::interrupts::process::on'>on</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Turn interrupts on</p>
+
                         </td>
                     </tr>
                 
@@ -77,7 +82,10 @@
                         <td><a class='fn' href='fn.start_irq.html'
                                title='rustcode::interrupts::process::start_irq'>start_irq</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Helper method for use in IRQ
+Bookkeeping to start an irq.
+This should never happen if there is no current process.</p>
+
                         </td>
                     </tr>
                 </table></section>

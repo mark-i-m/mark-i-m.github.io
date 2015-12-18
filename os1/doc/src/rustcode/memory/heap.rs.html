@@ -592,66 +592,96 @@
 <span id="550">550</span>
 <span id="551">551</span>
 <span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
 </pre><pre class='rust '>
+<span class='doccomment'>//! This file contains the memory allocator used by the rust_alloc module</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! ***INTERRUPTS MUST BE OFF BEFORE RUNNING ANYTHING IN THIS FILE!!!!</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! The implementation in this file is a simple first-fit allocator.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! Invariants:</span>
+<span class='doccomment'>//! * BLOCK_ALIGN = 4*size_of::&lt;usize&gt;()</span>
+<span class='doccomment'>//! * All blocks will be a multiple of BLOCK_ALIGN</span>
+<span class='doccomment'>//! * All blocks will be BLOCK_ALIGN-aligned</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! Block structure:</span>
+<span class='doccomment'>//! * size</span>
+<span class='doccomment'>//! * forward pointer | free bits</span>
+<span class='doccomment'>//! * backward pointer | 0x0</span>
+<span class='doccomment'>//!   ...</span>
+<span class='doccomment'>//! * size (last word)</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! When a block is free, the first and last words should match and be equal to the size of the</span>
+<span class='doccomment'>//! block. The forward pointer points to the head of the next free block. The backward pointer</span>
+<span class='doccomment'>//! points to the head of the previous free block. Since all blocks are at least 16B aligned, at</span>
+<span class='doccomment'>//! least the last 4 bits of all block addresses are 0. The last 4 bits of the forward pointer</span>
+<span class='doccomment'>//! should be all 1s if the block is free.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! When a block is in use, the whole block is usable for the user. Thus,</span>
+<span class='doccomment'>//! usable size and block size are equal.</span>
+
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
-<span class='comment'>// This file contains the memory allocator used by the rust_alloc module</span>
-<span class='comment'>//</span>
-<span class='comment'>// ***INTERRUPTS MUST BE OFF BEFORE RUNNING ANYTHING IN THIS FILE!!!!</span>
-<span class='comment'>//</span>
-<span class='comment'>// The implementation in this file is a simple first-fit allocator.</span>
-<span class='comment'>//</span>
-<span class='comment'>// Invariants:</span>
-<span class='comment'>// * BLOCK_ALIGN = 4*size_of::&lt;usize&gt;()</span>
-<span class='comment'>// * All blocks will be a multiple of BLOCK_ALIGN</span>
-<span class='comment'>// * All blocks will be BLOCK_ALIGN-aligned</span>
-<span class='comment'>//</span>
-<span class='comment'>// Block structure:</span>
-<span class='comment'>// * size</span>
-<span class='comment'>// * forward pointer | free bits</span>
-<span class='comment'>// * backward pointer | 0x0</span>
-<span class='comment'>//   ...</span>
-<span class='comment'>// * size (last word)</span>
-<span class='comment'>//</span>
-<span class='comment'>// When a block is free, the first and last words should match and be equal to the size of the</span>
-<span class='comment'>// block. The forward pointer points to the head of the next free block. The backward pointer</span>
-<span class='comment'>// points to the head of the previous free block. Since all blocks are at least 16B aligned, at</span>
-<span class='comment'>// least the last 4 bits of all block addresses are 0. The last 4 bits of the forward pointer</span>
-<span class='comment'>// should be all 1s if the block is free.</span>
-<span class='comment'>//</span>
-<span class='comment'>// When a block is in use, the whole block is usable for the user. Thus,</span>
-<span class='comment'>// usable size and block size are equal.</span>
 
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>mem</span>::{<span class='ident'>size_of</span>};
 
+<span class='doccomment'>/// A flag to turn on and off debugging output</span>
 <span class='kw'>const</span> <span class='ident'>DEBUG</span>: <span class='ident'>bool</span> <span class='op'>=</span> <span class='boolval'>false</span>;
 
+<span class='doccomment'>/// A const representing the minimum alignment of any block.</span>
+<span class='doccomment'>/// It is effectively a const, but it has to be initialized at startup because `size_of` is</span>
+<span class='doccomment'>/// non-const.</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>BLOCK_ALIGN</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
 
-<span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>START</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
-<span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>END</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+<span class='doccomment'>/// The start address of the kernel heap</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>START</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
 
+<span class='doccomment'>/// The end address of the kernel heap. That is, the first address that is not in the heap.</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>END</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+
+<span class='doccomment'>/// A pointer to the first free heap block</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>free_list</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='op'>=</span> <span class='number'>0</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>;
 
 <span class='comment'>// heap stats</span>
+<span class='doccomment'>/// The number of successful mallocs (for stats purposes)</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>SUCC_MALLOCS</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+<span class='doccomment'>/// The number of unsuccessful mallocs (for stats purposes)</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>FAIL_MALLOCS</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+<span class='doccomment'>/// The number of successful frees (for stats purposes)</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>FREES</span>:        <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
 
-<span class='comment'>// memory block</span>
+<span class='doccomment'>/// A struct representing a heap block.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// It is empty because, by nature, heap blocks are variable size. Rather thsn give the compiler</span>
+<span class='doccomment'>/// a hard time, we can just a block fixed size and write methods that are aware of the situation.</span>
+<span class='doccomment'>/// Then, we just need to cast an address into a block pointer. This is a very C-ish solution,</span>
+<span class='doccomment'>/// but it makes life easy because a heap implementation usually has a lot of pointer arithmetic.</span>
 <span class='kw'>struct</span> <span class='ident'>Block</span>;
 
 <span class='kw'>impl</span> <span class='ident'>Block</span> {
-    <span class='comment'>// returns the first word of the block</span>
+    <span class='doccomment'>/// Returns the first word of the block, which will contain the size if this is a free block</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_head</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>usize</span>)
     }
 
-    <span class='comment'>// sets the header to the given value</span>
+    <span class='doccomment'>/// Sets the header to the given value</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>set_head</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>head</span>: <span class='ident'>usize</span>) {
         <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>usize</span>) <span class='op'>=</span> <span class='ident'>head</span>;
     }
 
-    <span class='comment'>// returns the last word of the block</span>
+    <span class='doccomment'>/// Returns the last word of the block, which will contain the size if this is a free block</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_foot</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='kw'>let</span> <span class='ident'>ptr</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>u8</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>u8</span>;
         <span class='kw'>let</span> <span class='ident'>size</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_size</span>() <span class='op'>-</span> <span class='ident'>size_of</span>::<span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>();
@@ -664,7 +694,7 @@
         <span class='op'>*</span>(<span class='ident'>ptr</span>.<span class='ident'>offset</span>(<span class='ident'>size</span> <span class='kw'>as</span> <span class='ident'>isize</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>usize</span>)
     }
 
-    <span class='comment'>// sets the footer to the given value</span>
+    <span class='doccomment'>/// Sets the footer to the given value</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>set_foot</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>foot</span>: <span class='ident'>usize</span>) {
         <span class='kw'>let</span> <span class='ident'>ptr</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>u8</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>u8</span>;
         <span class='kw'>let</span> <span class='ident'>size</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_size</span>() <span class='op'>-</span> <span class='ident'>size_of</span>::<span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>();
@@ -677,23 +707,24 @@
         <span class='op'>*</span>(<span class='ident'>ptr</span>.<span class='ident'>offset</span>(<span class='ident'>size</span> <span class='kw'>as</span> <span class='ident'>isize</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>usize</span>) <span class='op'>=</span> <span class='ident'>foot</span>;
     }
 
-    <span class='comment'>// gets the 4 free bits of the block</span>
+    <span class='doccomment'>/// Gets the 4 free bits of the block</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_free_bits</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>u8</span> {
         (<span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>1</span>) <span class='kw-2'>&amp;</span> <span class='number'>0xF</span>) <span class='kw'>as</span> <span class='ident'>u8</span>
     }
 
-    <span class='comment'>// set the forward pointer (but not the free bits)</span>
+    <span class='doccomment'>/// Set the forward pointer (but not the free bits)</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>set_next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>next</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>) {
         <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>1</span>) <span class='op'>=</span>
             ((<span class='ident'>next</span> <span class='kw'>as</span> <span class='ident'>usize</span>) <span class='kw-2'>&amp;</span> <span class='op'>!</span><span class='number'>0xF</span>) <span class='op'>|</span> (<span class='self'>self</span>.<span class='ident'>get_free_bits</span>() <span class='kw'>as</span> <span class='ident'>usize</span>);
     }
 
-    <span class='comment'>// set the backward pointer</span>
+    <span class='doccomment'>/// Set the backward pointer</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>set_prev</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>prev</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>) {
         <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>2</span>) <span class='op'>=</span> (<span class='ident'>prev</span> <span class='kw'>as</span> <span class='ident'>usize</span>) <span class='kw-2'>&amp;</span> <span class='op'>!</span><span class='number'>0xF</span>;
     }
 
-    <span class='comment'>// returns true if the block is a valid free block</span>
+    <span class='doccomment'>/// Returns true if the block is a valid free block.</span>
+    <span class='doccomment'>/// This method does a lot of sanity checiking</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>is_free</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
         <span class='comment'>// make sure the block addr is reasonable</span>
         <span class='kw'>let</span> <span class='ident'>self_usize</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
@@ -736,29 +767,29 @@
         <span class='self'>self</span>.<span class='ident'>get_free_bits</span>() <span class='op'>==</span> <span class='number'>0xF</span>
     }
 
-    <span class='comment'>// set the free bits</span>
+    <span class='doccomment'>/// Set the free bits</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>mark_free</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>1</span>) <span class='op'>|=</span> <span class='number'>0xF</span>;
     }
 
-    <span class='comment'>// clear the free bits</span>
-    <span class='comment'>// the block should already be removed from the free list</span>
+    <span class='doccomment'>/// Clear the free bits.</span>
+    <span class='doccomment'>/// The block should already be removed from the free list</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>mark_used</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>1</span>) <span class='op'>&amp;=</span> <span class='op'>!</span><span class='number'>0xF</span>; <span class='comment'>// bitwise !</span>
     }
 
-    <span class='comment'>// return the size of the block (user-usable data size)</span>
+    <span class='doccomment'>/// Return the size of the block (user-usable data size)</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='self'>self</span>.<span class='ident'>get_head</span>()
     }
 
-    <span class='comment'>// set the size of block</span>
+    <span class='doccomment'>/// Set the size of block</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>set_size</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>size</span>: <span class='ident'>usize</span>) {
         <span class='self'>self</span>.<span class='ident'>set_head</span>(<span class='ident'>size</span>);
         <span class='self'>self</span>.<span class='ident'>set_foot</span>(<span class='ident'>size</span>);
     }
 
-    <span class='comment'>// returns the heap block immediately following this one</span>
+    <span class='doccomment'>/// Returns the heap block immediately following this one</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_contiguous_next</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> {
         <span class='kw'>let</span> <span class='ident'>ptr</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>u8</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>u8</span>;
         <span class='kw'>let</span> <span class='ident'>size</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_size</span>();
@@ -771,8 +802,8 @@
         <span class='ident'>ptr</span>.<span class='ident'>offset</span>(<span class='ident'>size</span> <span class='kw'>as</span> <span class='ident'>isize</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>
     }
 
-    <span class='comment'>// returns the heap block immediately preceding this one</span>
-    <span class='comment'>// returns null if there is no valid previous block</span>
+    <span class='doccomment'>/// Returns the heap block immediately preceding this one</span>
+    <span class='doccomment'>/// or null if there is no valid previous block.</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_contiguous_prev</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> {
         <span class='kw'>let</span> <span class='ident'>prev_size_ptr</span> <span class='op'>=</span> (<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='op'>-</span><span class='number'>1</span>);
 
@@ -794,19 +825,17 @@
         <span class='ident'>ptr</span>.<span class='ident'>offset</span>(<span class='op'>-</span>(<span class='ident'>prev_size</span> <span class='kw'>as</span> <span class='ident'>isize</span>)) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>
     }
 
-    <span class='comment'>// returns the forward ptr of the block</span>
-    <span class='comment'>// (excluding the free bits)</span>
+    <span class='doccomment'>/// Returns the forward ptr of the block (excluding the free bits)</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_free_next</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> {
         (<span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>1</span>) <span class='kw-2'>&amp;</span> <span class='op'>!</span><span class='number'>0xF</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>
     }
 
-    <span class='comment'>// returns the backward ptr of the block</span>
+    <span class='doccomment'>/// Returns the backward ptr of the block</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_free_prev</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span> {
         (<span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>usize</span>).<span class='ident'>offset</span>(<span class='number'>2</span>) <span class='kw-2'>&amp;</span> <span class='op'>!</span><span class='number'>0xF</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>
     }
 
-    <span class='comment'>// remove from free list</span>
-    <span class='comment'>// clear forward/backward pointers</span>
+    <span class='doccomment'>/// Remove from free list. Clear forward/backward pointers</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='comment'>// make sure the block is free and valid</span>
         <span class='kw'>if</span> <span class='op'>!</span><span class='self'>self</span>.<span class='ident'>is_free</span>() {
@@ -832,7 +861,7 @@
         <span class='self'>self</span>.<span class='ident'>set_prev</span>(<span class='number'>0</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Block</span>);
     }
 
-    <span class='comment'>// add to head of free list</span>
+    <span class='doccomment'>/// Add to head of free list</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>insert</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='kw'>let</span> <span class='ident'>old_head</span> <span class='op'>=</span> <span class='ident'>free_list</span>;
 
@@ -852,8 +881,8 @@
         }
     }
 
-    <span class='comment'>// merge with next</span>
-    <span class='comment'>// removes the second block from the free list before merging</span>
+    <span class='doccomment'>/// Merge this block with the next block.</span>
+    <span class='doccomment'>/// Removes the second block from the free list before merging</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>merge_with_next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='comment'>// make sure both blocks are free and valid</span>
         <span class='kw'>if</span> <span class='op'>!</span><span class='self'>self</span>.<span class='ident'>is_free</span>() {
@@ -876,11 +905,11 @@
         <span class='self'>self</span>.<span class='ident'>set_size</span>(<span class='ident'>new_size</span>);
     }
 
-    <span class='comment'>// split the block so that it is the given size</span>
-    <span class='comment'>// inserts the new block into the free list</span>
-    <span class='comment'>// the block must be large enough to split (&gt;= 2*BLOCK_ALIGN)</span>
-    <span class='comment'>// the block must be free</span>
-    <span class='comment'>// the new size must be a multiple of BLOCK_ALIGN</span>
+    <span class='doccomment'>/// Split the block so that it is the given size.</span>
+    <span class='doccomment'>/// Insert the new block into the free list.</span>
+    <span class='doccomment'>/// The block must be large enough to split (`&gt;= 2*BLOCK_ALIGN`).</span>
+    <span class='doccomment'>/// The block must be free.</span>
+    <span class='doccomment'>/// The new size must be a multiple of `BLOCK_ALIGN`.</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>split</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>size</span>: <span class='ident'>usize</span>) {
         <span class='comment'>// make sure the block is free and valid</span>
         <span class='kw'>if</span> <span class='op'>!</span><span class='self'>self</span>.<span class='ident'>is_free</span>() {
@@ -916,10 +945,10 @@
         (<span class='op'>*</span><span class='ident'>new_block</span>).<span class='ident'>insert</span>();
     }
 
-    <span class='comment'>// returns true if this block matches the size and alignment</span>
-    <span class='comment'>// returns the size it which the block should be split to obtain</span>
-    <span class='comment'>//   an aligned block; the second return value is meaningless if</span>
-    <span class='comment'>//   we return false.</span>
+    <span class='doccomment'>/// Returns true if this block matches the size and alignment.</span>
+    <span class='doccomment'>/// Returns the size at which the block should be split to obtain</span>
+    <span class='doccomment'>/// an aligned block; the second return value is meaningless if</span>
+    <span class='doccomment'>/// we return false.</span>
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>is_match</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>size</span>: <span class='ident'>usize</span>, <span class='ident'>align</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> (<span class='ident'>bool</span>, <span class='ident'>usize</span>) {
         <span class='kw'>let</span> <span class='ident'>block_addr</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>Block</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
         <span class='kw'>let</span> <span class='ident'>aligned</span> <span class='op'>=</span> <span class='ident'>round_to_n</span>(<span class='ident'>block_addr</span>, <span class='ident'>align</span>);
@@ -932,19 +961,19 @@
     }
 }
 
-<span class='comment'>// round up to the nearest multiple of BLOCK_ALIGN</span>
+<span class='doccomment'>/// Round up to the nearest multiple of `BLOCK_ALIGN`</span>
 <span class='kw'>fn</span> <span class='ident'>round_to_block_align</span>(<span class='ident'>size</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
     <span class='kw'>unsafe</span> {
         <span class='ident'>round_to_n</span>(<span class='ident'>size</span>, <span class='ident'>BLOCK_ALIGN</span>)
     }
 }
 
-<span class='comment'>// n must be a power of 2</span>
+<span class='doccomment'>/// Round the size to `n`. `n` must be a power of 2</span>
 <span class='kw'>fn</span> <span class='ident'>round_to_n</span>(<span class='ident'>size</span>: <span class='ident'>usize</span>, <span class='ident'>n</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
     <span class='kw'>if</span> <span class='ident'>size</span> <span class='op'>%</span> <span class='ident'>n</span> <span class='op'>==</span> <span class='number'>0</span> { <span class='ident'>size</span> } <span class='kw'>else</span> { <span class='ident'>size</span> <span class='op'>-</span> (<span class='ident'>size</span> <span class='op'>%</span> <span class='ident'>n</span>) <span class='op'>+</span> <span class='ident'>n</span> }
 }
 
-<span class='comment'>// Init the heap</span>
+<span class='doccomment'>/// Initialize the kernel heap</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>(<span class='ident'>start</span>: <span class='ident'>usize</span>, <span class='ident'>size</span>: <span class='ident'>usize</span>) {
     <span class='kw'>unsafe</span> {
         <span class='comment'>// set BLOCK_ALIGN</span>
@@ -1125,7 +1154,7 @@
     }
 }
 
-<span class='comment'>// Helper methods to compute stats</span>
+<span class='doccomment'>/// Helper method to compute stats</span>
 <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_block_stats</span>() <span class='op'>-&gt;</span> (<span class='ident'>usize</span>, <span class='ident'>usize</span>, <span class='ident'>usize</span>) {
     <span class='comment'>// counters</span>
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>num_free</span> <span class='op'>=</span> <span class='number'>0</span>;
@@ -1142,9 +1171,6 @@
 
     (<span class='ident'>num_free</span>, <span class='ident'>size_free</span>, <span class='ident'>END</span> <span class='op'>-</span> <span class='ident'>START</span> <span class='op'>-</span> <span class='ident'>size_free</span>)
 }
-
-
-
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

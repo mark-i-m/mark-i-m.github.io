@@ -45,15 +45,17 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1200' class='srclink' href='../../../src/rustcode/interrupts/pic.rs.html#3-98' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+        </span><a id='src-1200' class='srclink' href='../../../src/rustcode/interrupts/pic.rs.html#1-108' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>A module for programmable interrupt controller</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::option::Option::<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>None</a>;</code></td></tr><tr><td><code>use super::super::<a class='mod' href='../../../rustcode/machine/index.html' title='rustcode::machine'>machine</a>::*;</code></td></tr><tr><td><code>use super::idt::<a class='fn' href='../../../rustcode/interrupts/idt/fn.add_interrupt_handler.html' title='rustcode::interrupts::idt::add_interrupt_handler'>add_interrupt_handler</a>;</code></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='constant' href='constant.C1.html'
                                title='rustcode::interrupts::pic::C1'>C1</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Command port for PIC1</p>
+
                         </td>
                     </tr>
                 
@@ -61,7 +63,8 @@
                         <td><a class='constant' href='constant.C2.html'
                                title='rustcode::interrupts::pic::C2'>C2</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Command port for PIC2</p>
+
                         </td>
                     </tr>
                 
@@ -69,7 +72,8 @@
                         <td><a class='constant' href='constant.D1.html'
                                title='rustcode::interrupts::pic::D1'>D1</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Data port for PIC1</p>
+
                         </td>
                     </tr>
                 
@@ -77,7 +81,8 @@
                         <td><a class='constant' href='constant.D2.html'
                                title='rustcode::interrupts::pic::D2'>D2</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Data port for PIC2</p>
+
                         </td>
                     </tr>
                 
@@ -85,7 +90,8 @@
                         <td><a class='constant' href='constant.FIRST_IDT.html'
                                title='rustcode::interrupts::pic::FIRST_IDT'>FIRST_IDT</a></td>
                         <td class='docblock short'>
-                             
+                             <p>First IRQ number allowed for registering handlers</p>
+
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -94,7 +100,8 @@
                         <td><a class='fn' href='fn.init.html'
                                title='rustcode::interrupts::pic::init'>init</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Initialize the PIC, but leave interrupts disabled</p>
+
                         </td>
                     </tr>
                 
@@ -102,7 +109,8 @@
                         <td><a class='fn' href='fn.pic_eoi.html'
                                title='rustcode::interrupts::pic::pic_eoi'>pic_eoi</a></td>
                         <td class='docblock short'>
-                             
+                             <p>End of interrupt: send the next irq, but interrupts still disabled</p>
+
                         </td>
                     </tr>
                 
@@ -110,7 +118,8 @@
                         <td><a class='fn' href='fn.pic_irq.html'
                                title='rustcode::interrupts::pic::pic_irq'>pic_irq</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Rust-side IRQ handling code</p>
+
                         </td>
                     </tr>
                 </table></section>

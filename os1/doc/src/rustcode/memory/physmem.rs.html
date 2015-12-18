@@ -231,8 +231,19 @@
 <span id="189">189</span>
 <span id="190">190</span>
 <span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
 </pre><pre class='rust '>
-<span class='comment'>// Physical memory management</span>
+<span class='doccomment'>//! Physical memory management</span>
 
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>ops</span>::{<span class='ident'>Index</span>, <span class='ident'>IndexMut</span>};
 
@@ -240,44 +251,46 @@
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>regionmap</span>::<span class='ident'>RegionMap</span>;
 
-<span class='comment'>// array of frame info</span>
+<span class='doccomment'>/// Array of `FrameInfo`. This is a pointer to the region of memory used</span>
+<span class='doccomment'>/// to hold physical memory allocation metadata.</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>FRAME_INFO</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>FrameInfoSection</span> <span class='op'>=</span> <span class='number'>0</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>FrameInfoSection</span>;
 
-<span class='comment'>// index of the first free frame in a LIFO list</span>
-<span class='comment'>// 0 =&gt; empty list</span>
+<span class='doccomment'>/// The index of the first free frame in a LIFO list.</span>
+<span class='doccomment'>/// 0 =&gt; empty list</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>FREE_FRAMES</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
 
-<span class='comment'>// A physical memory frame</span>
+<span class='doccomment'>/// A physical memory frame</span>
 <span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>C</span>, <span class='ident'>packed</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Frame</span> {
     <span class='ident'>mem</span>: [<span class='ident'>usize</span>; <span class='number'>1024</span>],
 }
 
-<span class='comment'>// should take up 4MiB on a 32-bit machine</span>
-<span class='comment'>// there is one frame info for each frame, associated</span>
-<span class='comment'>// by frame index</span>
+<span class='doccomment'>/// Should take up 4MiB on a 32-bit machine.</span>
+<span class='doccomment'>/// There is one frame info for each frame, associated by frame index</span>
 <span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>C</span>, <span class='ident'>packed</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>FrameInfoSection</span> {
     <span class='ident'>arr</span>: [<span class='ident'>FrameInfo</span>; <span class='number'>1</span><span class='op'>&lt;&lt;</span><span class='number'>20</span>],
 }
 
-<span class='comment'>// Frame info</span>
-<span class='comment'>// When free</span>
-<span class='comment'>// 31                 20           0</span>
-<span class='comment'>// [nnnnnnnnnnnnnnnnnnnn           1]</span>
-<span class='comment'>//  ^-- next free index            ^-- free bit</span>
-<span class='comment'>//</span>
-<span class='comment'>// When allocated</span>
-<span class='comment'>// 31                           30 0</span>
-<span class='comment'>// [ssssssssssssssssssssssssssssss 0]</span>
-<span class='comment'>//  ^-- ptr to shared frame info   ^-- free bit</span>
+<span class='doccomment'>/// Frame info</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// When free</span>
+<span class='doccomment'>/// 31                 20           0</span>
+<span class='doccomment'>/// [nnnnnnnnnnnnnnnnnnnn           1]</span>
+<span class='doccomment'>///  ^-- next free index            ^-- free bit</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// When allocated</span>
+<span class='doccomment'>/// 31                           30 0</span>
+<span class='doccomment'>/// [ssssssssssssssssssssssssssssss 0]</span>
+<span class='doccomment'>///  ^-- ptr to shared frame info   ^-- free bit</span>
+<span class='doccomment'>/// ```</span>
 <span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>C</span>, <span class='ident'>packed</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>FrameInfo</span> {
     <span class='ident'>info</span>: <span class='ident'>usize</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>Frame</span> {
-    <span class='comment'>// allocate a frame and return its physical address</span>
+    <span class='doccomment'>/// Allocate a frame and return its physical address</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>alloc</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='kw'>let</span> <span class='ident'>all_frames</span> <span class='op'>=</span> <span class='kw'>unsafe</span> {<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>FRAME_INFO</span>};
 
@@ -298,7 +311,7 @@
         <span class='ident'>free</span> <span class='op'>&lt;&lt;</span> <span class='number'>12</span>
     }
 
-    <span class='comment'>// free this frame</span>
+    <span class='doccomment'>/// Free the frame with the given index</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>free</span>(<span class='ident'>index</span>: <span class='ident'>usize</span>) {
         <span class='kw'>let</span> <span class='ident'>all_frames</span> <span class='op'>=</span> <span class='kw'>unsafe</span> {<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>FRAME_INFO</span>};
 
@@ -308,6 +321,7 @@
     }
 }
 
+<span class='doccomment'>/// Make the words of a frame indexable</span>
 <span class='kw'>impl</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Frame</span> {
     <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>usize</span>;
 
@@ -316,12 +330,14 @@
     }
 }
 
+<span class='doccomment'>/// Make the words of a frame indexable</span>
 <span class='kw'>impl</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Frame</span> {
     <span class='kw'>fn</span> <span class='ident'>index_mut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>usize</span> {
         <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>mem</span>[<span class='ident'>index</span>]
     }
 }
 
+<span class='doccomment'>/// Make the `FrameInfoSection` indexable</span>
 <span class='kw'>impl</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FrameInfoSection</span> {
     <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>FrameInfo</span>;
 
@@ -330,6 +346,7 @@
     }
 }
 
+<span class='doccomment'>/// Make the `FrameInfoSection` indexable</span>
 <span class='kw'>impl</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FrameInfoSection</span> {
     <span class='kw'>fn</span> <span class='ident'>index_mut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>FrameInfo</span> {
         <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>arr</span>[<span class='ident'>index</span>]
@@ -337,8 +354,8 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>FrameInfo</span> {
-    <span class='comment'>// allocate the frame referred to by this FrameInfo</span>
-    <span class='comment'>// NOTE this should only be called on the first frame in the free list</span>
+    <span class='doccomment'>/// Allocate the frame referred to by this `FrameInfo`.</span>
+    <span class='doccomment'>/// NOTE: this should only be called on the first frame in the free list</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>alloc</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>get_index</span>() <span class='op'>!=</span> <span class='kw'>unsafe</span> {<span class='ident'>FREE_FRAMES</span>} {
             <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Attempt to alloc middle free frame {}&quot;</span>, <span class='self'>self</span>.<span class='ident'>get_index</span>());
@@ -357,7 +374,7 @@
         <span class='self'>self</span>.<span class='ident'>set_free</span>(<span class='boolval'>false</span>);
     }
 
-    <span class='comment'>// free the frame referred to by this FrameInfo</span>
+    <span class='doccomment'>/// Free the frame referred to by this FrameInfo</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>free</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='comment'>// TODO: handle case of shared pages</span>
 
@@ -375,28 +392,33 @@
         <span class='ident'>on</span>();
     }
 
+    <span class='doccomment'>/// Get the index of the `Frame`</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='kw'>let</span> <span class='ident'>first</span> <span class='op'>=</span> <span class='kw'>unsafe</span> { <span class='ident'>FRAME_INFO</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>FrameInfoSection</span> <span class='kw'>as</span> <span class='ident'>usize</span> };
         <span class='kw'>let</span> <span class='ident'>addr</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>FrameInfo</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
         (<span class='ident'>addr</span> <span class='op'>-</span> <span class='ident'>first</span>) <span class='op'>/</span> <span class='number'>4</span>
     }
 
+    <span class='doccomment'>/// Set the free bit of this `FrameInfo` to 1 if `free` is true; else 0</span>
     <span class='kw'>fn</span> <span class='ident'>set_free</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>free</span>: <span class='ident'>bool</span>) {
         <span class='kw'>let</span> <span class='ident'>base</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>info</span> <span class='kw-2'>&amp;</span> <span class='op'>!</span><span class='number'>1</span>;
         <span class='self'>self</span>.<span class='ident'>info</span> <span class='op'>=</span> <span class='ident'>base</span> <span class='op'>|</span> <span class='kw'>if</span> <span class='ident'>free</span> { <span class='number'>1</span> } <span class='kw'>else</span> { <span class='number'>0</span> }
     }
 
+    <span class='doccomment'>/// Get the index of the next free frame</span>
     <span class='kw'>fn</span> <span class='ident'>get_next_free</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='self'>self</span>.<span class='ident'>info</span> <span class='op'>&gt;&gt;</span> <span class='number'>12</span>
     }
 
+    <span class='doccomment'>/// Set the index of the next free frame</span>
     <span class='kw'>fn</span> <span class='ident'>set_next_free</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>next</span>: <span class='ident'>usize</span>) {
         <span class='kw'>let</span> <span class='ident'>base</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>info</span> <span class='kw-2'>&amp;</span> <span class='number'>0xFFF</span>;
         <span class='self'>self</span>.<span class='ident'>info</span> <span class='op'>=</span> (<span class='ident'>next</span> <span class='op'>&lt;&lt;</span> <span class='number'>12</span>) <span class='op'>|</span> <span class='ident'>base</span>;
     }
 }
 
-<span class='comment'>// init phys mem frames using the rest of physical memory</span>
+<span class='doccomment'>/// Initialize physical memory frames using the rest of physical memory.</span>
+<span class='doccomment'>/// This function detects all available physical memory.</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>(<span class='ident'>start</span>: <span class='ident'>usize</span>) {
     <span class='kw'>unsafe</span> {
         <span class='comment'>// round start up to nearest page boundary</span>

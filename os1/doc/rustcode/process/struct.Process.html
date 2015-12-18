@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-877' class='srclink' href='../../src/rustcode/process/mod.rs.html#58-85' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-877' class='srclink' href='../../src/rustcode/process/mod.rs.html#60-89' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Process {
     name: &amp;'static str,
     pid: usize,
@@ -56,20 +56,38 @@
     pub addr_space: <a class='struct' href='../../rustcode/memory/struct.AddressSpace.html' title='rustcode::memory::AddressSpace'>AddressSpace</a>,
     pub disable_cnt: usize,
     pub next_proc: *mut <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a>,
-}</pre><h2 class='fields'>Fields</h2>
+}</pre><div class='docblock'><p>Represents a single process, its identity, resources, etc.</p>
+</div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
-                                  <td id='structfield.name'><code>name</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.pid'><code>pid</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.run'><code>run</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.state'><code>state</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.stack'><code>stack</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.kcontext'><code>kcontext</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.addr_space'><code>addr_space</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.disable_cnt'><code>disable_cnt</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.next_proc'><code>next_proc</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(name: &amp;'static str, run: fn(&amp;<a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a>) -&gt; usize) -&gt; *mut <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h4>
-<h4 id='method.get_stack' class='method'><code>fn <a href='#method.get_stack' class='fnname'>get_stack</a>(&amp;mut self)</code></h4>
-<h4 id='method.set_state' class='method'><code>fn <a href='#method.set_state' class='fnname'>set_state</a>(&amp;mut self, s: <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a>)</code></h4>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+                                  <td id='structfield.name'><code>name</code></td><td><div class='docblock'><p>Name of the process; not necessarily unique</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.pid'><code>pid</code></td><td><div class='docblock'><p>Unique 32-bit identifier</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.run'><code>run</code></td><td><div class='docblock'><p>The routine of the process</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.state'><code>state</code></td><td><div class='docblock'><p>The current state of the process</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.stack'><code>stack</code></td><td><div class='docblock'><p>A pointer to the kheap-allocated stack space for this process&#39;s
+kernel stack. This pointer is to the bottom of the stack, not the head.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.kcontext'><code>kcontext</code></td><td><div class='docblock'><p>The saved kernel context for context switching</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.addr_space'><code>addr_space</code></td><td><div class='docblock'><p>The virtual memory address space of the process</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.disable_cnt'><code>disable_cnt</code></td><td><div class='docblock'><p>Number of calls to interrupts::on() while this process was running
+Interrupts are on if <code>disable_cnt == 0</code></p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.next_proc'><code>next_proc</code></td><td><div class='docblock'><p>A link for use in process queues</p>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(name: &amp;'static str, run: fn(&amp;<a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a>) -&gt; usize) -&gt; *mut <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h4>
+<div class='docblock'><p>Create a new process with the given name and routine. Because processes
+are a fundamental abstraction, they are too low level for me to use Rust well.
+For this reason, a raw pointer is returned to the process, and it is the
+job of the caller to arrange for the process to be reaped.</p>
+</div><h4 id='method.get_stack' class='method'><code>fn <a href='#method.get_stack' class='fnname'>get_stack</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>A helper to get a kernel stack for this process</p>
+</div><h4 id='method.set_state' class='method'><code>fn <a href='#method.set_state' class='fnname'>set_state</a>(&amp;mut self, s: <a class='enum' href='../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a>)</code></h4>
+<div class='docblock'><p>Set the state of the process to <code>s</code></p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, other: &amp;<a class='struct' href='../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a>) -&gt; bool</code></h4>
 <h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, other: &amp;Rhs) -&gt; bool</code></h4>

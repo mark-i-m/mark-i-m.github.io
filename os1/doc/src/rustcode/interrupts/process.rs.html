@@ -103,12 +103,12 @@
 <span id="61">61</span>
 <span id="62">62</span>
 </pre><pre class='rust '>
-<span class='comment'>// Submodule for cleanly turning interrupts on and off</span>
+<span class='doccomment'>//! Module for cleanly turning interrupts on and off</span>
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>process</span>::{<span class='ident'>CURRENT_PROCESS</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::{<span class='ident'>cli</span>, <span class='ident'>sti</span>};
 
-<span class='comment'>// Turn interrupts on</span>
+<span class='doccomment'>/// Turn interrupts on</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>on</span>() {
     <span class='kw'>unsafe</span> {
         <span class='comment'>// Meaningless to enable interrupts w/o current proc</span>
@@ -125,7 +125,7 @@
     }
 }
 
-<span class='comment'>// Turn interrupts off</span>
+<span class='doccomment'>/// Turn interrupts off</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>off</span>() {
     <span class='kw'>unsafe</span> {
         <span class='ident'>cli</span>();
@@ -136,10 +136,9 @@
     }
 }
 
-<span class='comment'>// Helper methods for use in IRQ</span>
-
-<span class='comment'>// Bookkeeping to start an irq</span>
-<span class='comment'>// This should never happen if there is no current process</span>
+<span class='doccomment'>/// Helper method for use in IRQ</span>
+<span class='doccomment'>/// Bookkeeping to start an irq.</span>
+<span class='doccomment'>/// This should never happen if there is no current process.</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>start_irq</span>() {
     <span class='kw'>unsafe</span> {
         <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>CURRENT_PROCESS</span>.<span class='ident'>is_null</span>() {
@@ -153,7 +152,8 @@
     }
 }
 
-<span class='comment'>// Bookkeeping to end an irq</span>
+<span class='doccomment'>/// Helper method for use in IRQ</span>
+<span class='doccomment'>/// Bookkeeping to end an irq</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end_irq</span>() {
     <span class='kw'>unsafe</span> {
         <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>CURRENT_PROCESS</span>.<span class='ident'>is_null</span>() {

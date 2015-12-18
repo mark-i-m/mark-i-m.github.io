@@ -58,8 +58,17 @@
 <span id="16">16</span>
 <span id="17">17</span>
 <span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
 </pre><pre class='rust '>
-<span class='comment'>// This module contains everything that has to do with memory</span>
+<span class='doccomment'>//! This module contains everything that has to do with memory</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! 1. Kernel heap manager</span>
+<span class='doccomment'>//! 2. Physical memory allocator</span>
+<span class='doccomment'>//! 3. Virtual memory management</span>
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>virtmem</span>::{<span class='ident'>vmm_page_fault</span>, <span class='ident'>AddressSpace</span>};
 
@@ -70,6 +79,7 @@
 <span class='kw'>mod</span> <span class='ident'>virtmem</span>;
 <span class='kw'>mod</span> <span class='ident'>regionmap</span>;
 
+<span class='doccomment'>/// Initialize all memory subsystems</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>() {
     <span class='comment'>// make the kernel heap 3MiB starting at 1MiB.</span>
     <span class='comment'>// make memory data structures take up the next 4MiB.</span>

@@ -45,15 +45,23 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-181' class='srclink' href='../../src/rustcode/memory/mod.rs.html#3-18' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+        </span><a id='src-181' class='srclink' href='../../src/rustcode/memory/mod.rs.html#1-23' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This module contains everything that has to do with memory</p>
+
+<ol>
+<li>Kernel heap manager</li>
+<li>Physical memory allocator</li>
+<li>Virtual memory management</li>
+</ol>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='mod' href='heap/index.html'
                                title='rustcode::memory::heap'>heap</a></td>
                         <td class='docblock short'>
-                             
+                             <p>This file contains the memory allocator used by the rust_alloc module</p>
+
                         </td>
                     </tr>
                 
@@ -61,7 +69,8 @@
                         <td><a class='mod' href='physmem/index.html'
                                title='rustcode::memory::physmem'>physmem</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Physical memory management</p>
+
                         </td>
                     </tr>
                 
@@ -69,7 +78,8 @@
                         <td><a class='mod' href='regionmap/index.html'
                                title='rustcode::memory::regionmap'>regionmap</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Module for detecting available physical memory</p>
+
                         </td>
                     </tr>
                 
@@ -77,7 +87,9 @@
                         <td><a class='mod' href='rust_alloc/index.html'
                                title='rustcode::memory::rust_alloc'>rust_alloc</a></td>
                         <td class='docblock short'>
-                             
+                             <p>This file contains the outside interface with the kernels memory allocator.
+rustc will look for these functions.</p>
+
                         </td>
                     </tr>
                 
@@ -85,7 +97,17 @@
                         <td><a class='mod' href='virtmem/index.html'
                                title='rustcode::memory::virtmem'>virtmem</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A module for virtual memory management
+The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.
+When a page fault occurs (in kernel or user mode), if the faulting address is in this range,
+the fault is considered an error, and the process is killed. This is because the first 8MiB are
+shared, direct-mapped memory and should never produce a page fault. The next 4MiB are mapped to
+the processes page directory, so if there is a fault in this range, it is fatal, since it means
+the paging structures have been corrupt. The 13MiB is claimed by the kernel for use by the kmap
+function, which temporarily maps a page meant to reside in another process&#39;s address space.
+This is needed for creating a new process. Luckly, with Rust, segfaults should be extremely
+rare.</p>
+
                         </td>
                     </tr>
                 </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -94,7 +116,8 @@
                         <td><a class='struct' href='struct.AddressSpace.html'
                                title='rustcode::memory::AddressSpace'>AddressSpace</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The address space of a single process</p>
+
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -103,7 +126,8 @@
                         <td><a class='fn' href='fn.init.html'
                                title='rustcode::memory::init'>init</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Initialize all memory subsystems</p>
+
                         </td>
                     </tr>
                 
@@ -111,7 +135,8 @@
                         <td><a class='fn' href='fn.vmm_page_fault.html'
                                title='rustcode::memory::vmm_page_fault'>vmm_page_fault</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The Rust-side code of the page fault handler.</p>
+
                         </td>
                     </tr>
                 </table></section>
