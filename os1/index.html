@@ -12,6 +12,8 @@
         <a href="implementation.html">Implementation</a>
         <span class="nav-separator"></span>
         <a href="doc/rustcode/index.html">Rust Docs</a>
+        <span class="nav-separator"></span>
+        <a href="https://github.com/mark-i-m/os1">Source</a>
     </div>
 </div>
 <div id="body-container">
@@ -19,28 +21,44 @@
 
     <p>
     I had originally intended not to have any library code in my kernel at all, but
-    this is not possible with Rust. As a result I am linking in `libcore` and
-    `liballoc` which contain the heart of Rust functionality. Special thanks to
+    this is not possible with Rust. As a result I am linking in <code>libcore</code> and
+    <code>liballoc</code> which contain the heart of Rust functionality. Special thanks to
     Krzysztof for helping me get that set up!
     </p>
 
+    <br />
+
     <p>
-    The source is available <a href="https://github.com/mark-i-m/os1">on Github</a>
+    The source is available on <a href="https://github.com/mark-i-m/os1">Github</a>,
+    along with instructions for building and running from source.
+    </p>
+
+    <br />
+
+    <p>
+    A disk image is available for those that want to just run the OS in QEMU (
+    <a href="os1.img">Download the disk image</a>). To boot, run this command.
+    You can replace <code>os1.img</code> with the actual path to the .img file:
+    <br />
+    <code>
+    qemu-system-x86_64 --serial mon:stdio -drive format=raw,file=os1.img,index=2,media=disk
+    </code>
     </p>
 
     <p>
-    TODO: screenshots? .iso?
+    A screenshot of the what you should see after the OS runs for a second or so is below.
     </p>
+
+    <br />
 
     <p>
     Features so far:
         <ul>
-            <li>Heap manager</li>
             <li>Preemptive multitasking</li>
-            <li>VGA buffer management</li>
-            <li>Reaper and Idle processes</li>
-            <li>Concurrency Control (via Semaphores)</li>
+            <li>Heap manager</li>
             <li>Virtual Memory</li>
+            <li>Concurrency Control (via Semaphores)</li>
+            <li>Primitive display driver (in VGA mode)</li>
         </ul>
     </p>
 
@@ -57,32 +75,12 @@
     </ul>
     </p>
 
-    <p>
-    Requirements:
-
-    <ul>
-        <li><code>qemu</code></li>
-        <li><code>gcc</code></li>
-        <li>
-        rust 1.6 (2015-11-08 nightly)<br /><br />
-
-        You need to have nightly Rust (not Beta or release) because the project uses some
-        unstable language features, such as <code>libcore</code>.<br /><br />
-
-        <code>curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly --date=2015-11-08</code>
-        </li>
-    </ul>
-    </p>
+    <br />
 
     <p>
-    Build instructions
-
-    <ol>
-        <li><code>git clone https://github.com/mark-i-m/os1.git</code></li>
-        <li><code>cd os1/</code></li>
-        <li><code>git submodule init && git submodule update</code></li>
-        <li><code>make rungraphic</code></li>
-    </ol>
+    Screenshot <br />
+    <img src="screenshot.png" alt="Screenshot of os1 running... Not much to
+    look at yet..." />
     </p>
 
 </div>
