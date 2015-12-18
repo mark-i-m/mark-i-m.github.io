@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["add_trap_handler",""],["init","Initialize interrupts. Set the PIT frequency to `pit_hz`"],["off",""],["on",""]],"mod":[["idt","This module contains IDT stuff"],["pic",""],["pit",""],["process",""]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["COLS",""],["ROWS",""],["VGA_BUFFER",""]],"enum":[["Color",""]],"struct":[["VGA",""],["VGABuff",""],["VGAChar",""]]});

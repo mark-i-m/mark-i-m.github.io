@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["init",""],["vmm_page_fault",""]],"static":[["PDE0",""],["PDE1",""],["VMM_ON",""]],"struct":[["AddressSpace",""],["PagingEntry",""],["VMTable",""]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["STACK_SIZE",""]],"enum":[["State",""]],"fn":[["_proc_yield",""],["exit",""],["init",""],["proc_yield",""],["start_proc",""]],"mod":[["context",""],["current",""],["idle",""],["init",""],["ready_queue",""],["reaper",""],["user",""]],"static":[["CURRENT_PROCESS",""],["NEXT_ID",""]],"struct":[["Process",""]]});

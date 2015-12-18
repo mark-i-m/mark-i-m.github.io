@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `machine.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>machine.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+</pre><pre class='rust '>
+<span class='doccomment'>//! This is the Rust-side handle for assembly code. Most of the FFI handles are</span>
+<span class='doccomment'>//! in this module.</span>
+
+<span class='attribute'>#[<span class='ident'>link</span>(<span class='ident'>name</span> <span class='op'>=</span> <span class='string'>&quot;asmcode&quot;</span>, <span class='ident'>repr</span><span class='op'>=</span><span class='string'>&quot;static&quot;</span>)]</span>
+
+<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>option</span>::<span class='prelude-ty'>Option</span>;
+
+<span class='kw'>use</span> <span class='ident'>data_structures</span>::<span class='ident'>ProcessQueue</span>;
+
+<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>improper_ctypes</span>)]</span>
+<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
+<span class='kw'>extern</span> <span class='string'>&quot;C&quot;</span> {
+    <span class='doccomment'>/// a wrapper around inb</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>inb</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='ident'>u8</span>; <span class='comment'>// if there are problems, change u8 to u32</span>
+
+    <span class='doccomment'>/// a wrapper around inl</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>inl</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='ident'>u32</span>;
+
+    <span class='doccomment'>/// a wrapper around outb</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>outb</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>, <span class='ident'>val</span>: <span class='ident'>u8</span>);
+
+    <span class='doccomment'>/// a wrapper around ltr</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>ltr</span>(<span class='ident'>tr</span>: <span class='ident'>usize</span>);
+
+    <span class='doccomment'>/// Initialize the PIT with the given divide</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pit_do_init</span>(<span class='ident'>divide</span>: <span class='ident'>usize</span>);
+
+    <span class='doccomment'>/// Turn on VM and load cr3 with the given value</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vmm_on</span>(<span class='ident'>cr3</span>: <span class='ident'>usize</span>);
+    <span class='comment'>// pub fn getcr0() -&gt; usize;</span>
+    <span class='comment'>// pub fn getcr3() -&gt; usize;</span>
+
+    <span class='doccomment'>/// Flush the page from the TLB</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>invlpg</span>(<span class='ident'>pg</span>: <span class='ident'>usize</span>);
+
+    <span class='doccomment'>/// a wrapper around cli</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>cli</span>();
+
+    <span class='doccomment'>/// a wrapper around sti</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>sti</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 0</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq0</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 1</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq1</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 2</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq2</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 3</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq3</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 4</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq4</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 5</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq5</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 6</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq6</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 7</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq7</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 8</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq8</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 9</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq9</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 10</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq10</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 11</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq11</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 12</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq12</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 13</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq13</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 14</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq14</span>();
+
+    <span class='doccomment'>/// A handler for IRQ 15</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>irq15</span>();
+
+    <span class='doccomment'>/// An unsafe proc_yield handle that saves the context of the current</span>
+    <span class='doccomment'>/// process before switching. *Do not* call this function directly! Instead,</span>
+    <span class='doccomment'>/// use `process::proc_yield`, which is a wrapper around this function.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// NOTE: Interrupts should disable before calling this function.</span>
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>never</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>proc_yield</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='ident'>q</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>ProcessQueue</span><span class='op'>&gt;</span>);
+
+    <span class='doccomment'>/// Do a context switch to `next_context` with the eflags register set to</span>
+    <span class='doccomment'>/// `eflags`. This function is called by `process::proc_yield`</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>context_switch</span>(<span class='ident'>next_context</span>: <span class='ident'>super</span>::<span class='ident'>process</span>::<span class='ident'>context</span>::<span class='ident'>KContext</span>, <span class='ident'>eflags</span>: <span class='ident'>usize</span>);
+
+    <span class='doccomment'>/// Returns the value of eflags</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>eflags</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span>;
+
+    <span class='comment'>// pub fn switchToUser(pc: usize, esp: usize, eax: usize);</span>
+
+    <span class='doccomment'>/// The assembly handle for the page fault handler. This function calls</span>
+    <span class='doccomment'>/// `vmm_page_fault`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>page_fault_handler</span>();
+    <span class='comment'>// pub fn syscallTrap();</span>
+
+    <span class='comment'>//pub fn sys_sigret(uint32_t);</span>
+}
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "rustcode";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

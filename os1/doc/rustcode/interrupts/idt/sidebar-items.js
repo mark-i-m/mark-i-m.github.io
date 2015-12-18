@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["add_interrupt_handler",""],["add_trap_handler",""]],"static":[["idt",""],["kernelCodeSeg",""]],"struct":[["IDTDescr","An entry in the IDT"],["TableDescriptor","A descriptor for use in with instructions like `lgdt` or `lidt`"]]});

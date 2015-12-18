@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `machine` mod in crate `rustcode`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, machine">
+
+    <title>rustcode::machine - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>rustcode</a></p><script>window.sidebarCurrent = {name: 'machine', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>rustcode</a>::<wbr><a class='mod' href=''>machine</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-135' class='srclink' href='../../src/rustcode/machine.rs.html#1-113' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This is the Rust-side handle for assembly code. Most of the FFI handles are
+in this module.</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::option::<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>;</code></td></tr><tr><td><code>use data_structures::<a class='struct' href='../../rustcode/data_structures/struct.ProcessQueue.html' title='rustcode::data_structures::ProcessQueue'>ProcessQueue</a>;</code></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.cli.html'
+                               title='rustcode::machine::cli'>cli</a></td>
+                        <td class='docblock short'>
+                             <p>a wrapper around cli</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.context_switch.html'
+                               title='rustcode::machine::context_switch'>context_switch</a></td>
+                        <td class='docblock short'>
+                             <p>Do a context switch to <code>next_context</code> with the eflags register set to
+<code>eflags</code>. This function is called by <code>process::proc_yield</code></p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.eflags.html'
+                               title='rustcode::machine::eflags'>eflags</a></td>
+                        <td class='docblock short'>
+                             <p>Returns the value of eflags</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.inb.html'
+                               title='rustcode::machine::inb'>inb</a></td>
+                        <td class='docblock short'>
+                             <p>a wrapper around inb</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.inl.html'
+                               title='rustcode::machine::inl'>inl</a></td>
+                        <td class='docblock short'>
+                             <p>a wrapper around inl</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.invlpg.html'
+                               title='rustcode::machine::invlpg'>invlpg</a></td>
+                        <td class='docblock short'>
+                             <p>Flush the page from the TLB</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq0.html'
+                               title='rustcode::machine::irq0'>irq0</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 0</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq1.html'
+                               title='rustcode::machine::irq1'>irq1</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 1</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq10.html'
+                               title='rustcode::machine::irq10'>irq10</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 10</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq11.html'
+                               title='rustcode::machine::irq11'>irq11</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 11</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq12.html'
+                               title='rustcode::machine::irq12'>irq12</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 12</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq13.html'
+                               title='rustcode::machine::irq13'>irq13</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 13</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq14.html'
+                               title='rustcode::machine::irq14'>irq14</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 14</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq15.html'
+                               title='rustcode::machine::irq15'>irq15</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 15</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq2.html'
+                               title='rustcode::machine::irq2'>irq2</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 2</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq3.html'
+                               title='rustcode::machine::irq3'>irq3</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 3</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq4.html'
+                               title='rustcode::machine::irq4'>irq4</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 4</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq5.html'
+                               title='rustcode::machine::irq5'>irq5</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 5</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq6.html'
+                               title='rustcode::machine::irq6'>irq6</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 6</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq7.html'
+                               title='rustcode::machine::irq7'>irq7</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 7</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq8.html'
+                               title='rustcode::machine::irq8'>irq8</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 8</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.irq9.html'
+                               title='rustcode::machine::irq9'>irq9</a></td>
+                        <td class='docblock short'>
+                             <p>A handler for IRQ 9</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.ltr.html'
+                               title='rustcode::machine::ltr'>ltr</a></td>
+                        <td class='docblock short'>
+                             <p>a wrapper around ltr</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.outb.html'
+                               title='rustcode::machine::outb'>outb</a></td>
+                        <td class='docblock short'>
+                             <p>a wrapper around outb</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.page_fault_handler.html'
+                               title='rustcode::machine::page_fault_handler'>page_fault_handler</a></td>
+                        <td class='docblock short'>
+                             <p>The assembly handle for the page fault handler. This function calls
+<code>vmm_page_fault</code>.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.pit_do_init.html'
+                               title='rustcode::machine::pit_do_init'>pit_do_init</a></td>
+                        <td class='docblock short'>
+                             <p>Initialize the PIT with the given divide</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.proc_yield.html'
+                               title='rustcode::machine::proc_yield'>proc_yield</a></td>
+                        <td class='docblock short'>
+                             <p>An unsafe proc_yield handle that saves the context of the current
+process before switching. <em>Do not</em> call this function directly! Instead,
+use <code>process::proc_yield</code>, which is a wrapper around this function.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.sti.html'
+                               title='rustcode::machine::sti'>sti</a></td>
+                        <td class='docblock short'>
+                             <p>a wrapper around sti</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.vmm_on.html'
+                               title='rustcode::machine::vmm_on'>vmm_on</a></td>
+                        <td class='docblock short'>
+                             <p>Turn on VM and load cr3 with the given value</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "rustcode";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>
