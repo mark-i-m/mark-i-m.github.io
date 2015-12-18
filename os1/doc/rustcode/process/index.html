@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-714' class='srclink' href='../../src/rustcode/process/mod.rs.html#1-298' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-714' class='srclink' href='../../src/rustcode/process/mod.rs.html#1-294' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A module for process management</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use alloc::boxed::<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>;</code></td></tr><tr><td><code>use core::option::Option::{<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>self</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Some</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>None</a>};</code></td></tr><tr><td><code>use core::fmt::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>, <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a>};</code></td></tr><tr><td><code>use core::cmp::<a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a>;</code></td></tr><tr><td><code>use core::sync::atomic::{<a class='struct' href='https://doc.rust-lang.org/nightly/core/sync/atomic/struct.AtomicUsize.html' title='core::sync::atomic::AtomicUsize'>AtomicUsize</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/sync/atomic/enum.Ordering.html' title='core::sync::atomic::Ordering'>Ordering</a>};</code></td></tr><tr><td><code>use core::ops::<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a>;</code></td></tr><tr><td><code>use super::data_structures::<a class='struct' href='../../rustcode/data_structures/struct.ProcessQueue.html' title='rustcode::data_structures::ProcessQueue'>ProcessQueue</a>;</code></td></tr><tr><td><code>use super::interrupts::{<a class='fn' href='../../rustcode/interrupts/fn.on.html' title='rustcode::interrupts::on'>on</a>, <a class='fn' href='../../rustcode/interrupts/fn.off.html' title='rustcode::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::machine::{<a class='mod' href='../../rustcode/machine/index.html' title='rustcode::machine'>self</a>, <a class='fn' href='../../rustcode/machine/fn.context_switch.html' title='rustcode::machine::context_switch'>context_switch</a>};</code></td></tr><tr><td><code>use super::memory::<a class='struct' href='../../rustcode/memory/struct.AddressSpace.html' title='rustcode::memory::AddressSpace'>AddressSpace</a>;</code></td></tr><tr><td><code>use self::context::{<a class='struct' href='../../rustcode/process/context/struct.KContext.html' title='rustcode::process::context::KContext'>KContext</a>};</code></td></tr><tr><td><code>use self::<a class='mod'
@@ -55,15 +55,8 @@
                         <td><a class='mod' href='context/index.html'
                                title='rustcode::process::context'>context</a></td>
                         <td class='docblock short'>
-                             
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='mod' href='current/index.html'
-                               title='rustcode::process::current'>current</a></td>
-                        <td class='docblock short'>
-                             
+                             <p>A module for saving a process&#39;s context</p>
+
                         </td>
                     </tr>
                 
@@ -71,7 +64,9 @@
                         <td><a class='mod' href='idle/index.html'
                                title='rustcode::process::idle'>idle</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A module for the idle process, a process that runs when there is
+nothing else left to do.</p>
+
                         </td>
                     </tr>
                 
@@ -79,7 +74,8 @@
                         <td><a class='mod' href='init/index.html'
                                title='rustcode::process::init'>init</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A module for the init process</p>
+
                         </td>
                     </tr>
                 
@@ -87,7 +83,8 @@
                         <td><a class='mod' href='ready_queue/index.html'
                                title='rustcode::process::ready_queue'>ready_queue</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A module for the ready queue</p>
+
                         </td>
                     </tr>
                 
@@ -95,7 +92,9 @@
                         <td><a class='mod' href='reaper/index.html'
                                title='rustcode::process::reaper'>reaper</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A module for the reaper process, a process which frees the resources
+of dead processes.</p>
+
                         </td>
                     </tr>
                 
@@ -103,7 +102,8 @@
                         <td><a class='mod' href='user/index.html'
                                title='rustcode::process::user'>user</a></td>
                         <td class='docblock short'>
-                             
+                             <p>A module for user processes</p>
+
                         </td>
                     </tr>
                 </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -142,7 +142,8 @@
                         <td><a class='static' href='static.CURRENT_PROCESS.html'
                                title='rustcode::process::CURRENT_PROCESS'>CURRENT_PROCESS</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The current running process if there is one</p>
+
                         </td>
                     </tr>
                 

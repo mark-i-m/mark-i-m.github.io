@@ -514,8 +514,10 @@
 <span id="472">472</span>
 <span id="473">473</span>
 <span id="474">474</span>
+<span id="475">475</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for virtual memory management</span>
+<span class='doccomment'>//!</span>
 <span class='doccomment'>//! The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.</span>
 <span class='doccomment'>//! When a page fault occurs (in kernel or user mode), if the faulting address is in this range,</span>
 <span class='doccomment'>//! the fault is considered an error, and the process is killed. This is because the first 8MiB are</span>

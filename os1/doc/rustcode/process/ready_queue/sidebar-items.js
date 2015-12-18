@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_next",""],["init",""],["make_ready",""]],"static":[["READY_QUEUE",""]]});
+initSidebarItems({"fn":[["get_next","Unqueue and return the next ready process. NOTE: returns null if there are no ready processes"],["make_ready","Add the process to the ready queue"]],"static":[["READY_QUEUE","The ready queue. A queue containing all processes that are ready to be scheduled."]]});

@@ -79,25 +79,17 @@
 <span id="37">37</span>
 <span id="38">38</span>
 <span id="39">39</span>
-<span id="40">40</span>
-<span id="41">41</span>
-<span id="42">42</span>
-<span id="43">43</span>
 </pre><pre class='rust '>
-<span class='comment'>// This file contains functions for push/pop to the ready queue</span>
+<span class='doccomment'>//! A module for the ready queue</span>
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>Process</span>, <span class='ident'>State</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>data_structures</span>::{<span class='ident'>ProcessQueue</span>};
 
-<span class='comment'>// points to the next process to run</span>
+<span class='doccomment'>/// The ready queue. A queue containing all processes that are ready to be scheduled.</span>
 <span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>READY_QUEUE</span>: <span class='ident'>ProcessQueue</span> <span class='op'>=</span> <span class='ident'>ProcessQueue</span>::<span class='ident'>new</span>();
 
-<span class='comment'>// init the ready q</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>() {
-}
-
-<span class='comment'>// Add the process to the Ready queue</span>
+<span class='doccomment'>/// Add the process to the ready queue</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>make_ready</span>(<span class='ident'>process</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span>) {
     <span class='comment'>// disable interrupts</span>
     <span class='ident'>off</span>();
@@ -112,8 +104,8 @@
     <span class='ident'>on</span>();
 }
 
-<span class='comment'>// Deque and return the next ready process</span>
-<span class='comment'>// NOTE: returns null if there are no ready processes</span>
+<span class='doccomment'>/// Unqueue and return the next ready process.</span>
+<span class='doccomment'>/// NOTE: returns null if there are no ready processes</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_next</span>() <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span> {
     <span class='kw'>unsafe</span> {
         <span class='comment'>// disable interrupts</span>

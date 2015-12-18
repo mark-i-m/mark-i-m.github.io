@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["init",""],["run",""]],"static":[["IDLE_PROCESS",""]]});
+initSidebarItems({"fn":[["init","Create the idle process but do not start it until we need it"],["run","Just waste a quantum and hopefully there will be something to do"]],"static":[["IDLE_PROCESS","The idle process"]]});

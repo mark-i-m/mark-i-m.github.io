@@ -63,23 +63,27 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
 </pre><pre class='rust '>
+<span class='doccomment'>//! A module for the idle process, a process that runs when there is</span>
+<span class='doccomment'>//! nothing else left to do.</span>
+
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>option</span>::<span class='prelude-ty'>Option</span>::{<span class='prelude-val'>None</span>};
 
 <span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>Process</span>, <span class='ident'>proc_yield</span>};
 
-<span class='comment'>// idle process</span>
+<span class='doccomment'>/// The idle process</span>
 <span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>IDLE_PROCESS</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span> <span class='op'>=</span> <span class='number'>0</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span>;
 
-
-<span class='comment'>// Init the idle process</span>
+<span class='doccomment'>/// Create the idle process but do not start it until we need it</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>() {
     <span class='kw'>unsafe</span> {
         <span class='ident'>IDLE_PROCESS</span> <span class='op'>=</span> <span class='ident'>Process</span>::<span class='ident'>new</span>(<span class='string'>&quot;idle&quot;</span>, <span class='self'>self</span>::<span class='ident'>run</span>);
     }
 }
 
-<span class='comment'>// Just waste a quantum and hopefully there will be something to do</span>
+<span class='doccomment'>/// Just waste a quantum and hopefully there will be something to do</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>run</span>(<span class='ident'>this</span>: <span class='kw-2'>&amp;</span><span class='ident'>Process</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
     <span class='kw'>loop</span>{

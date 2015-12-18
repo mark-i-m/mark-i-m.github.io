@@ -97,8 +97,13 @@
 <span id="55">55</span>
 <span id="56">56</span>
 <span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
 </pre><pre class='rust '>
-<span class='comment'>// Contains the reaper queue</span>
+<span class='doccomment'>//! A module for the reaper process, a process which frees the resources</span>
+<span class='doccomment'>//! of dead processes.</span>
 
 <span class='kw'>use</span> <span class='ident'>alloc</span>::<span class='ident'>boxed</span>::<span class='ident'>Box</span>;
 
@@ -109,15 +114,15 @@
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
 
-<span class='comment'>// The reaper blocks onto this semaphore until enough have died</span>
+<span class='doccomment'>/// The reaper blocks onto this semaphore until enough have died</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>REAPER_SEMAPHORE</span>: <span class='ident'>StaticSemaphore</span> <span class='op'>=</span> <span class='ident'>StaticSemaphore</span>::<span class='ident'>new</span>(<span class='number'>0</span>);
 
-<span class='comment'>// The reaper queue</span>
+<span class='doccomment'>/// The reaper queue. A queue of dead processes</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>REAPER_QUEUE</span>: <span class='ident'>ProcessQueue</span> <span class='op'>=</span> <span class='ident'>ProcessQueue</span>::<span class='ident'>new</span>();
 
-<span class='comment'>// The reaper process routine:,</span>
-<span class='comment'>// If there are dead processes, pop them from the</span>
-<span class='comment'>// REAPER_QUEUE and free the process&#39;s resources.</span>
+<span class='doccomment'>/// The reaper process routine:</span>
+<span class='doccomment'>/// If there are dead processes, pop them from the</span>
+<span class='doccomment'>/// REAPER_QUEUE and free their resources.</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>run</span>(<span class='ident'>this</span>: <span class='kw-2'>&amp;</span><span class='ident'>Process</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
     <span class='kw'>unsafe</span> {
@@ -143,6 +148,8 @@
     <span class='number'>0</span>
 }
 
+<span class='doccomment'>/// Add a dead process to the reaper queue.</span>
+<span class='doccomment'>/// NOTE: This should only be done for processes that will never run again</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reaper_add</span>(<span class='ident'>dead_proc</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span>) {
     <span class='ident'>off</span>();
     <span class='kw'>unsafe</span> {
@@ -152,6 +159,7 @@
     <span class='ident'>on</span>();
 }
 
+<span class='doccomment'>/// Create the reaper process and add it to the ready queue</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>() {
     <span class='ident'>ready_queue</span>::<span class='ident'>make_ready</span>(<span class='ident'>Process</span>::<span class='ident'>new</span>(<span class='string'>&quot;reaper&quot;</span>, <span class='self'>self</span>::<span class='ident'>run</span>));
 }

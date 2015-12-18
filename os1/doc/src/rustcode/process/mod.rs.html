@@ -334,10 +334,6 @@
 <span id="292">292</span>
 <span id="293">293</span>
 <span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for process management</span>
 
@@ -363,10 +359,7 @@
 
 <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>idle</span>::<span class='ident'>IDLE_PROCESS</span>;
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>current</span>::{<span class='ident'>CURRENT_PROCESS</span>};
-
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>context</span>;
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>current</span>;
 
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>ready_queue</span>;
 
@@ -380,6 +373,9 @@
 
 <span class='doccomment'>/// The next available PID</span>
 <span class='kw'>static</span> <span class='ident'>NEXT_ID</span>: <span class='ident'>AtomicUsize</span> <span class='op'>=</span> <span class='ident'>AtomicUsize</span>::<span class='ident'>new</span>(<span class='number'>0</span>);
+
+<span class='doccomment'>/// The current running process if there is one</span>
+<span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>CURRENT_PROCESS</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span> <span class='op'>=</span> <span class='number'>0</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>Process</span>;
 
 <span class='doccomment'>/// An enum representing the possible states of a process</span>
 <span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>C</span>)]</span>
@@ -510,10 +506,6 @@
 <span class='doccomment'>/// This creates the init, idle, and reaper processes, but does not</span>
 <span class='doccomment'>/// start any of them yet.</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>() {
-    <span class='comment'>// Init ready q and current proc</span>
-    <span class='ident'>current</span>::<span class='ident'>init</span>(); <span class='comment'>// THIS MUST BE FIRST</span>
-    <span class='ident'>ready_queue</span>::<span class='ident'>init</span>();
-
     <span class='comment'>// Add the init process to the ready q</span>
     <span class='ident'>ready_queue</span>::<span class='ident'>make_ready</span>(<span class='ident'>Process</span>::<span class='ident'>new</span>(<span class='string'>&quot;init&quot;</span>, <span class='self'>self</span>::<span class='ident'>init</span>::<span class='ident'>run</span>));
 

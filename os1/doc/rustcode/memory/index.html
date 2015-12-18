@@ -87,7 +87,7 @@
                         <td><a class='mod' href='rust_alloc/index.html'
                                title='rustcode::memory::rust_alloc'>rust_alloc</a></td>
                         <td class='docblock short'>
-                             <p>This file contains the outside interface with the kernels memory allocator.
+                             <p>This module contains the outside interface with the kernels memory allocator.
 rustc will look for these functions.</p>
 
                         </td>
@@ -97,16 +97,7 @@ rustc will look for these functions.</p>
                         <td><a class='mod' href='virtmem/index.html'
                                title='rustcode::memory::virtmem'>virtmem</a></td>
                         <td class='docblock short'>
-                             <p>A module for virtual memory management
-The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.
-When a page fault occurs (in kernel or user mode), if the faulting address is in this range,
-the fault is considered an error, and the process is killed. This is because the first 8MiB are
-shared, direct-mapped memory and should never produce a page fault. The next 4MiB are mapped to
-the processes page directory, so if there is a fault in this range, it is fatal, since it means
-the paging structures have been corrupt. The 13MiB is claimed by the kernel for use by the kmap
-function, which temporarily maps a page meant to reside in another process&#39;s address space.
-This is needed for creating a new process. Luckly, with Rust, segfaults should be extremely
-rare.</p>
+                             <p>A module for virtual memory management</p>
 
                         </td>
                     </tr>

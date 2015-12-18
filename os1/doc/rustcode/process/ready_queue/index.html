@@ -45,15 +45,17 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-763' class='srclink' href='../../../src/rustcode/process/ready_queue.rs.html#3-43' title='goto source code'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+        </span><a id='src-757' class='srclink' href='../../../src/rustcode/process/ready_queue.rs.html#1-39' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>A module for the ready queue</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use super::super::interrupts::{<a class='fn' href='../../../rustcode/interrupts/fn.on.html' title='rustcode::interrupts::on'>on</a>, <a class='fn' href='../../../rustcode/interrupts/fn.off.html' title='rustcode::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::{<a class='struct' href='../../../rustcode/process/struct.Process.html' title='rustcode::process::Process'>Process</a>, <a class='enum' href='../../../rustcode/process/enum.State.html' title='rustcode::process::State'>State</a>};</code></td></tr><tr><td><code>use super::super::data_structures::{<a class='struct' href='../../../rustcode/data_structures/struct.ProcessQueue.html' title='rustcode::data_structures::ProcessQueue'>ProcessQueue</a>};</code></td></tr></table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='static' href='static.READY_QUEUE.html'
                                title='rustcode::process::ready_queue::READY_QUEUE'>READY_QUEUE</a></td>
                         <td class='docblock short'>
-                             
+                             <p>The ready queue. A queue containing all processes that are ready to be scheduled.</p>
+
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -62,15 +64,9 @@
                         <td><a class='fn' href='fn.get_next.html'
                                title='rustcode::process::ready_queue::get_next'>get_next</a></td>
                         <td class='docblock short'>
-                             
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='fn' href='fn.init.html'
-                               title='rustcode::process::ready_queue::init'>init</a></td>
-                        <td class='docblock short'>
-                             
+                             <p>Unqueue and return the next ready process.
+NOTE: returns null if there are no ready processes</p>
+
                         </td>
                     </tr>
                 
@@ -78,7 +74,8 @@
                         <td><a class='fn' href='fn.make_ready.html'
                                title='rustcode::process::ready_queue::make_ready'>make_ready</a></td>
                         <td class='docblock short'>
-                             
+                             <p>Add the process to the ready queue</p>
+
                         </td>
                     </tr>
                 </table></section>

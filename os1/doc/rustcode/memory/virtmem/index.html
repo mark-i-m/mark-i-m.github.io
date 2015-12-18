@@ -45,9 +45,10 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-492' class='srclink' href='../../../src/rustcode/memory/virtmem.rs.html#1-474' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>A module for virtual memory management
-The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.
+        </span><a id='src-492' class='srclink' href='../../../src/rustcode/memory/virtmem.rs.html#1-475' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>A module for virtual memory management</p>
+
+<p>The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.
 When a page fault occurs (in kernel or user mode), if the faulting address is in this range,
 the fault is considered an error, and the process is killed. This is because the first 8MiB are
 shared, direct-mapped memory and should never produce a page fault. The next 4MiB are mapped to

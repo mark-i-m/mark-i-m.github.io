@@ -45,25 +45,32 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-999' class='srclink' href='../../../src/rustcode/vga/vga.rs.html#65-70' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-986' class='srclink' href='../../../src/rustcode/vga/vga.rs.html#65-69' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct VGA {
-    buff: <a class='struct' href='../../../rustcode/vga/vga/struct.VGABuff.html' title='rustcode::vga::vga::VGABuff'>VGABuff</a>,
     fg: <a class='enum' href='../../../rustcode/vga/vga/enum.Color.html' title='rustcode::vga::vga::Color'>Color</a>,
     bg: <a class='enum' href='../../../rustcode/vga/vga/enum.Color.html' title='rustcode::vga::vga::Color'>Color</a>,
     cursor: (usize, usize),
-}</pre><h2 class='fields'>Fields</h2>
+}</pre><div class='docblock'><p>Safe wrapper around unsafe VGA buffer.
+Provides the abstraction of a cursor and &quot;screen&quot;</p>
+</div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
-                                  <td id='structfield.buff'><code>buff</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.fg'><code>fg</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.bg'><code>bg</code></td><td></td></tr><tr class='stab '>
-                                  <td id='structfield.cursor'><code>cursor</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h3><div class='impl-items'><h4 id='method.get_vga' class='method'><code>fn <a href='#method.get_vga' class='fnname'>get_vga</a>() -&gt; <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h4>
-<h4 id='method.clear_screen' class='method'><code>fn <a href='#method.clear_screen' class='fnname'>clear_screen</a>(&amp;self)</code></h4>
-<h4 id='method.fill_rect' class='method'><code>fn <a href='#method.fill_rect' class='fnname'>fill_rect</a>(&amp;self, pos: (usize, usize), height: usize, width: usize)</code></h4>
-<h4 id='method.put_char' class='method'><code>fn <a href='#method.put_char' class='fnname'>put_char</a>(&amp;self, ch: char)</code></h4>
-<h4 id='method.set_fg_color' class='method'><code>fn <a href='#method.set_fg_color' class='fnname'>set_fg_color</a>(&amp;mut self, color: <a class='enum' href='../../../rustcode/vga/vga/enum.Color.html' title='rustcode::vga::vga::Color'>Color</a>)</code></h4>
-<h4 id='method.set_bg_color' class='method'><code>fn <a href='#method.set_bg_color' class='fnname'>set_bg_color</a>(&amp;mut self, color: <a class='enum' href='../../../rustcode/vga/vga/enum.Color.html' title='rustcode::vga::vga::Color'>Color</a>)</code></h4>
-<h4 id='method.set_cursor' class='method'><code>fn <a href='#method.set_cursor' class='fnname'>set_cursor</a>(&amp;mut self, pos: (usize, usize))</code></h4>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h4>
+                                  <td id='structfield.cursor'><code>cursor</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h4>
+<div class='docblock'><p>Create a new VGA handle</p>
+</div><h4 id='method.fill_rect' class='method'><code>fn <a href='#method.fill_rect' class='fnname'>fill_rect</a>(&amp;self, (row, col): (usize, usize), height: usize, width: usize)</code></h4>
+<div class='docblock'><p>Clear the rectangle and paint it with the background color</p>
+</div><h4 id='method.clear_screen' class='method'><code>fn <a href='#method.clear_screen' class='fnname'>clear_screen</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Paint the whole screen black</p>
+</div><h4 id='method.put_char' class='method'><code>fn <a href='#method.put_char' class='fnname'>put_char</a>(&amp;self, ch: char)</code></h4>
+<div class='docblock'><p>Set character at the cursor</p>
+</div><h4 id='method.set_fg' class='method'><code>fn <a href='#method.set_fg' class='fnname'>set_fg</a>(&amp;mut self, color: <a class='enum' href='../../../rustcode/vga/vga/enum.Color.html' title='rustcode::vga::vga::Color'>Color</a>)</code></h4>
+<div class='docblock'><p>Set foreground color of the cursor</p>
+</div><h4 id='method.set_bg' class='method'><code>fn <a href='#method.set_bg' class='fnname'>set_bg</a>(&amp;mut self, color: <a class='enum' href='../../../rustcode/vga/vga/enum.Color.html' title='rustcode::vga::vga::Color'>Color</a>)</code></h4>
+<div class='docblock'><p>Set background color of the cursor</p>
+</div><h4 id='method.set_cursor' class='method'><code>fn <a href='#method.set_cursor' class='fnname'>set_cursor</a>(&amp;mut self, (row, col): (usize, usize))</code></h4>
+<div class='docblock'><p>Set position of the cursor</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h4>
 <h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='struct' href='../../../rustcode/vga/vga/struct.VGA.html' title='rustcode::vga::vga::VGA'>VGA</a></code></h3><div class='impl-items'></div></section>
     <section id='search' class="content hidden"></section>

@@ -184,10 +184,50 @@
 <span id="142">142</span>
 <span id="143">143</span>
 <span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
 </pre><pre class='rust '>
-<span class='kw'>use</span> <span class='ident'>machine</span>;
+<span class='doccomment'>//! A module for VGA buffer manipulation</span>
 
-<span class='comment'>// colors for VGA display</span>
+<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>ops</span>::{<span class='ident'>Index</span>, <span class='ident'>IndexMut</span>};
+
+<span class='kw'>use</span> <span class='ident'>machine</span>::<span class='ident'>outb</span>;
+
+<span class='doccomment'>/// Colors for VGA display</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Color</span> {
@@ -209,122 +249,154 @@
     <span class='ident'>White</span>      <span class='op'>=</span> <span class='number'>15</span>,
 }
 
-<span class='comment'>// size of VGA buffer</span>
+<span class='doccomment'>/// Number of rows in the VGA buffer</span>
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>ROWS</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>25</span>;
+<span class='doccomment'>/// Number of columns in the VGA buffer</span>
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>COLS</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>80</span>;
 
-<span class='comment'>// location of vga buffer</span>
-<span class='kw'>const</span> <span class='ident'>VGA_BUFFER</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VGAChar</span> <span class='op'>=</span> (<span class='number'>0xb8000</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VGAChar</span>);
+<span class='doccomment'>/// The VGA buffer</span>
+<span class='kw'>pub</span> <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>VGA_BUFFER</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VGABuff</span> <span class='op'>=</span> (<span class='number'>0xb8000</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VGABuff</span>);
 
-<span class='comment'>// represents a single character on the screen</span>
+<span class='doccomment'>/// The VGA command port</span>
+<span class='kw'>const</span> <span class='ident'>VGA_CMD</span>: <span class='ident'>u16</span> <span class='op'>=</span> <span class='number'>0x3d4</span>;
+
+<span class='doccomment'>/// The VGA data port</span>
+<span class='kw'>const</span> <span class='ident'>VGA_DATA</span>: <span class='ident'>u16</span> <span class='op'>=</span> <span class='number'>0x3d5</span>;
+
+<span class='doccomment'>/// Represents a single character in the VGA buffer.</span>
+<span class='doccomment'>/// The first byte represents the ASCII character. The next</span>
+<span class='doccomment'>/// 4 bits represent the background color. The last 4 bits</span>
+<span class='doccomment'>/// represent the forground color.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>,<span class='ident'>Clone</span>)]</span>
-<span class='kw'>struct</span> <span class='ident'>VGAChar</span> {
+<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>C</span>, <span class='ident'>packed</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>VGAChar</span> {
     <span class='ident'>ch</span>: <span class='ident'>u8</span>,
     <span class='ident'>color</span>: <span class='ident'>u8</span>,
 }
 
-<span class='comment'>// unsafe construct that give direct access to VGA buffer</span>
+<span class='doccomment'>/// Abstracts the VGA buffer</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>raw_pointer_derive</span>)]</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>)]</span>
-<span class='kw'>struct</span> <span class='ident'>VGABuff</span> {
-    <span class='ident'>buff</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VGAChar</span>,
+<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>C</span>, <span class='ident'>packed</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>VGABuff</span> {
+    <span class='ident'>buff</span>: [[<span class='ident'>VGAChar</span>; <span class='ident'>COLS</span>]; <span class='ident'>ROWS</span>],
 }
 
-<span class='kw'>impl</span> <span class='ident'>VGABuff</span> {
-    <span class='kw'>fn</span> <span class='ident'>get_buff</span>() <span class='op'>-&gt;</span> <span class='ident'>VGABuff</span> {
-        <span class='ident'>VGABuff</span> {<span class='ident'>buff</span>: <span class='ident'>VGA_BUFFER</span>}
-    }
-
-    <span class='kw'>fn</span> <span class='ident'>pack_colors</span>(<span class='ident'>fg</span>: <span class='ident'>Color</span>, <span class='ident'>bg</span>: <span class='ident'>Color</span>) <span class='op'>-&gt;</span> <span class='ident'>u8</span> {
-        ((<span class='ident'>bg</span> <span class='kw'>as</span> <span class='ident'>u8</span>) <span class='op'>&lt;&lt;</span> <span class='number'>4</span>) <span class='op'>|</span> ((<span class='ident'>fg</span> <span class='kw'>as</span> <span class='ident'>u8</span>))
-    }
-
-    <span class='kw'>fn</span> <span class='ident'>put_char</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, (<span class='ident'>r</span>,<span class='ident'>c</span>): (<span class='ident'>usize</span>, <span class='ident'>usize</span>), <span class='ident'>ch</span>: <span class='ident'>VGAChar</span>) {
-        <span class='kw'>unsafe</span> {
-            <span class='op'>*</span><span class='self'>self</span>.<span class='ident'>buff</span>.<span class='ident'>offset</span>((<span class='ident'>r</span> <span class='op'>*</span> <span class='ident'>COLS</span> <span class='op'>+</span> <span class='ident'>c</span>) <span class='kw'>as</span> <span class='ident'>isize</span>) <span class='op'>=</span> <span class='ident'>ch</span>;
-        }
-    }
-}
-
-<span class='comment'>// safe wrapper around unsafe VGA buffer</span>
-<span class='comment'>// Provides the abstraction of a cursor and &quot;screen&quot;</span>
+<span class='doccomment'>/// Safe wrapper around unsafe VGA buffer.</span>
+<span class='doccomment'>/// Provides the abstraction of a cursor and &quot;screen&quot;</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>VGA</span> {
-    <span class='ident'>buff</span>: <span class='ident'>VGABuff</span>,
     <span class='ident'>fg</span>: <span class='ident'>Color</span>,
     <span class='ident'>bg</span>: <span class='ident'>Color</span>,
     <span class='ident'>cursor</span>: (<span class='ident'>usize</span>, <span class='ident'>usize</span>),
 }
 
+<span class='kw'>impl</span> <span class='ident'>VGAChar</span> {
+    <span class='doccomment'>/// Set the forground color of the character</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_fg</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>c</span>: <span class='ident'>Color</span>) {
+        <span class='kw'>let</span> <span class='ident'>bg</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>color</span> <span class='kw-2'>&amp;</span> <span class='number'>0xF0</span>;
+        <span class='self'>self</span>.<span class='ident'>color</span> <span class='op'>=</span> <span class='ident'>bg</span> <span class='op'>|</span> (<span class='ident'>c</span> <span class='kw'>as</span> <span class='ident'>u8</span>);
+    }
+
+    <span class='doccomment'>/// Set the background color of the character</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_bg</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>c</span>: <span class='ident'>Color</span>) {
+        <span class='kw'>let</span> <span class='ident'>fg</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>color</span> <span class='kw-2'>&amp;</span> <span class='number'>0x0F</span>;
+        <span class='self'>self</span>.<span class='ident'>color</span> <span class='op'>=</span> ((<span class='ident'>c</span> <span class='kw'>as</span> <span class='ident'>u8</span>) <span class='op'>&lt;&lt;</span> <span class='number'>4</span>) <span class='op'>|</span> <span class='ident'>fg</span>;
+    }
+
+    <span class='doccomment'>/// Set the ASCII character</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_char</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>ch</span>: <span class='ident'>char</span>) {
+        <span class='self'>self</span>.<span class='ident'>ch</span> <span class='op'>=</span> <span class='ident'>ch</span> <span class='kw'>as</span> <span class='ident'>u32</span> <span class='kw'>as</span> <span class='ident'>u8</span>;
+    }
+}
+
+<span class='doccomment'>/// Make the VGA buffer indexable</span>
+<span class='kw'>impl</span> <span class='ident'>Index</span><span class='op'>&lt;</span>(<span class='ident'>usize</span>, <span class='ident'>usize</span>)<span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>VGABuff</span> {
+    <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>VGAChar</span>;
+
+    <span class='kw'>fn</span> <span class='ident'>index</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, (<span class='ident'>row</span>, <span class='ident'>col</span>): (<span class='ident'>usize</span>, <span class='ident'>usize</span>)) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>VGAChar</span> {
+        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>buff</span>[<span class='ident'>row</span>][<span class='ident'>col</span>]
+    }
+}
+
+<span class='doccomment'>/// Make the VGA buffer indexable</span>
+<span class='kw'>impl</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span>(<span class='ident'>usize</span>, <span class='ident'>usize</span>)<span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>VGABuff</span> {
+    <span class='kw'>fn</span> <span class='ident'>index_mut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, (<span class='ident'>row</span>, <span class='ident'>col</span>): (<span class='ident'>usize</span>, <span class='ident'>usize</span>)) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>VGAChar</span> {
+        <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>buff</span>[<span class='ident'>row</span>][<span class='ident'>col</span>]
+    }
+}
+
 <span class='kw'>impl</span> <span class='ident'>VGA</span> {
-    <span class='comment'>// get a new VGA handle</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_vga</span>() <span class='op'>-&gt;</span> <span class='ident'>VGA</span> {
-        <span class='ident'>VGA</span> {<span class='ident'>buff</span>: <span class='ident'>VGABuff</span>::<span class='ident'>get_buff</span>(), <span class='ident'>fg</span>: <span class='ident'>Color</span>::<span class='ident'>White</span>, <span class='ident'>bg</span>: <span class='ident'>Color</span>::<span class='ident'>Black</span>, <span class='ident'>cursor</span>: (<span class='number'>0</span>,<span class='number'>0</span>)}
+    <span class='doccomment'>/// Create a new VGA handle</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>VGA</span> {
+        <span class='ident'>VGA</span> {
+            <span class='ident'>fg</span>: <span class='ident'>Color</span>::<span class='ident'>White</span>,
+            <span class='ident'>bg</span>: <span class='ident'>Color</span>::<span class='ident'>Black</span>,
+            <span class='ident'>cursor</span>: (<span class='number'>0</span>,<span class='number'>0</span>)
+        }
     }
 
-    <span class='comment'>// clear the rect and paint it with the background color</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>clear_screen</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) {
-        <span class='self'>self</span>.<span class='ident'>fill_rect</span>((<span class='number'>0</span> <span class='kw'>as</span> <span class='ident'>usize</span>,<span class='number'>0</span> <span class='kw'>as</span> <span class='ident'>usize</span>), <span class='ident'>ROWS</span> <span class='kw'>as</span> <span class='ident'>usize</span>, <span class='ident'>COLS</span> <span class='kw'>as</span> <span class='ident'>usize</span>);
-    }
-
-    <span class='comment'>// clear the rect and paint it with the background color</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>fill_rect</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>pos</span>: (<span class='ident'>usize</span>, <span class='ident'>usize</span>), <span class='ident'>height</span>: <span class='ident'>usize</span>, <span class='ident'>width</span>: <span class='ident'>usize</span>) {
-        <span class='kw'>let</span> <span class='ident'>colors</span> <span class='op'>=</span> <span class='ident'>VGABuff</span>::<span class='ident'>pack_colors</span>(<span class='self'>self</span>.<span class='ident'>fg</span>, <span class='self'>self</span>.<span class='ident'>bg</span>);
-        <span class='kw'>let</span> <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>VGAChar</span> {<span class='ident'>ch</span>: <span class='string'>&#39; &#39;</span> <span class='kw'>as</span> <span class='ident'>u32</span> <span class='kw'>as</span> <span class='ident'>u8</span>, <span class='ident'>color</span>: <span class='ident'>colors</span>};
-
-        <span class='kw'>let</span> (<span class='ident'>row</span>, <span class='ident'>col</span>) <span class='op'>=</span> <span class='ident'>pos</span>;
-
+    <span class='doccomment'>/// Clear the rectangle and paint it with the background color</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>fill_rect</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, (<span class='ident'>row</span>, <span class='ident'>col</span>): (<span class='ident'>usize</span>, <span class='ident'>usize</span>), <span class='ident'>height</span>: <span class='ident'>usize</span>, <span class='ident'>width</span>: <span class='ident'>usize</span>) {
         <span class='comment'>// check bounds</span>
-        <span class='kw'>if</span> <span class='ident'>row</span> <span class='op'>&gt;=</span> <span class='ident'>ROWS</span> <span class='op'>||</span> <span class='ident'>col</span> <span class='op'>&gt;=</span> <span class='ident'>COLS</span> {<span class='kw'>return</span>;}
+        <span class='kw'>if</span> <span class='ident'>row</span> <span class='op'>&gt;=</span> <span class='ident'>ROWS</span> <span class='op'>||</span> <span class='ident'>col</span> <span class='op'>&gt;=</span> <span class='ident'>COLS</span> {
+            <span class='kw'>return</span>;
+        }
 
         <span class='kw'>let</span> <span class='ident'>rend</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='ident'>row</span> <span class='op'>+</span> <span class='ident'>height</span> <span class='op'>&gt;</span> <span class='ident'>ROWS</span> { <span class='ident'>ROWS</span> } <span class='kw'>else</span> {<span class='ident'>row</span> <span class='op'>+</span> <span class='ident'>height</span>};
-        <span class='kw'>let</span> <span class='ident'>cend</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='ident'>col</span> <span class='op'>+</span> <span class='ident'>width</span> <span class='op'>&gt;</span> <span class='ident'>COLS</span> { <span class='ident'>COLS</span> } <span class='kw'>else</span> {<span class='ident'>col</span> <span class='op'>+</span> <span class='ident'>width</span>};
+        <span class='kw'>let</span> <span class='ident'>cend</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='ident'>col</span> <span class='op'>+</span> <span class='ident'>width</span>  <span class='op'>&gt;</span> <span class='ident'>COLS</span> { <span class='ident'>COLS</span> } <span class='kw'>else</span> {<span class='ident'>col</span> <span class='op'>+</span> <span class='ident'>width</span> };
 
-        <span class='kw'>for</span> <span class='ident'>i</span> <span class='kw'>in</span> <span class='ident'>row</span>..<span class='ident'>rend</span> {
-            <span class='kw'>for</span> <span class='ident'>j</span> <span class='kw'>in</span> <span class='ident'>col</span>..<span class='ident'>cend</span> {
-                <span class='self'>self</span>.<span class='ident'>buff</span>.<span class='ident'>put_char</span>((<span class='ident'>i</span> <span class='kw'>as</span> <span class='ident'>usize</span>,<span class='ident'>j</span> <span class='kw'>as</span> <span class='ident'>usize</span>), <span class='ident'>c</span>);
+        <span class='kw'>for</span> <span class='ident'>r</span> <span class='kw'>in</span> <span class='ident'>row</span>..<span class='ident'>rend</span> {
+            <span class='kw'>for</span> <span class='ident'>c</span> <span class='kw'>in</span> <span class='ident'>col</span>..<span class='ident'>cend</span> {
+                <span class='kw'>unsafe</span> {
+                    (<span class='op'>*</span><span class='ident'>VGA_BUFFER</span>)[(<span class='ident'>r</span>,<span class='ident'>c</span>)].<span class='ident'>set_bg</span>(<span class='self'>self</span>.<span class='ident'>bg</span>);
+                    (<span class='op'>*</span><span class='ident'>VGA_BUFFER</span>)[(<span class='ident'>r</span>,<span class='ident'>c</span>)].<span class='ident'>set_fg</span>(<span class='self'>self</span>.<span class='ident'>fg</span>);
+                    (<span class='op'>*</span><span class='ident'>VGA_BUFFER</span>)[(<span class='ident'>r</span>,<span class='ident'>c</span>)].<span class='ident'>set_char</span>(<span class='string'>&#39; &#39;</span>);
+                }
             }
         }
     }
 
-    <span class='comment'>// set character at the cursor</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>put_char</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>ch</span>: <span class='ident'>char</span>) {
-        <span class='kw'>let</span> <span class='ident'>colors</span> <span class='op'>=</span> <span class='ident'>VGABuff</span>::<span class='ident'>pack_colors</span>(<span class='self'>self</span>.<span class='ident'>fg</span>, <span class='self'>self</span>.<span class='ident'>bg</span>);
-        <span class='kw'>let</span> <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>VGAChar</span> {<span class='ident'>ch</span>: <span class='ident'>ch</span> <span class='kw'>as</span> <span class='ident'>u32</span> <span class='kw'>as</span> <span class='ident'>u8</span>, <span class='ident'>color</span>: <span class='ident'>colors</span>};
-
-        <span class='self'>self</span>.<span class='ident'>buff</span>.<span class='ident'>put_char</span>(<span class='self'>self</span>.<span class='ident'>cursor</span>, <span class='ident'>c</span>);
+    <span class='doccomment'>/// Paint the whole screen black</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>clear_screen</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) {
+        <span class='self'>self</span>.<span class='ident'>fill_rect</span>((<span class='number'>0</span> <span class='kw'>as</span> <span class='ident'>usize</span>,<span class='number'>0</span> <span class='kw'>as</span> <span class='ident'>usize</span>), <span class='ident'>ROWS</span> <span class='kw'>as</span> <span class='ident'>usize</span>, <span class='ident'>COLS</span> <span class='kw'>as</span> <span class='ident'>usize</span>);
     }
 
-    <span class='comment'>// set foreground color of the cursor</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_fg_color</span>(<span class='kw-2'>&amp;</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>color</span>: <span class='ident'>Color</span>) {
+    <span class='doccomment'>/// Set character at the cursor</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>put_char</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>ch</span>: <span class='ident'>char</span>) {
+        <span class='kw'>unsafe</span> {
+            (<span class='op'>*</span><span class='ident'>VGA_BUFFER</span>)[<span class='self'>self</span>.<span class='ident'>cursor</span>].<span class='ident'>set_bg</span>(<span class='self'>self</span>.<span class='ident'>bg</span>);
+            (<span class='op'>*</span><span class='ident'>VGA_BUFFER</span>)[<span class='self'>self</span>.<span class='ident'>cursor</span>].<span class='ident'>set_fg</span>(<span class='self'>self</span>.<span class='ident'>fg</span>);
+            (<span class='op'>*</span><span class='ident'>VGA_BUFFER</span>)[<span class='self'>self</span>.<span class='ident'>cursor</span>].<span class='ident'>set_char</span>(<span class='ident'>ch</span>);
+        }
+    }
+
+    <span class='doccomment'>/// Set foreground color of the cursor</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_fg</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>color</span>: <span class='ident'>Color</span>) {
         <span class='self'>self</span>.<span class='ident'>fg</span> <span class='op'>=</span> <span class='ident'>color</span>;
     }
 
-    <span class='comment'>// set background color of the cursor</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_bg_color</span>(<span class='kw-2'>&amp;</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>color</span>: <span class='ident'>Color</span>) {
+    <span class='doccomment'>/// Set background color of the cursor</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_bg</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>color</span>: <span class='ident'>Color</span>) {
         <span class='self'>self</span>.<span class='ident'>bg</span> <span class='op'>=</span> <span class='ident'>color</span>;
     }
 
-    <span class='comment'>// set position of the cursor</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_cursor</span>(<span class='kw-2'>&amp;</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>pos</span>: (<span class='ident'>usize</span>, <span class='ident'>usize</span>)) {
+    <span class='doccomment'>/// Set position of the cursor</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_cursor</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, (<span class='ident'>row</span>, <span class='ident'>col</span>): (<span class='ident'>usize</span>, <span class='ident'>usize</span>)) {
         <span class='comment'>// update struct</span>
-        <span class='self'>self</span>.<span class='ident'>cursor</span> <span class='op'>=</span> <span class='ident'>pos</span>;
+        <span class='self'>self</span>.<span class='ident'>cursor</span> <span class='op'>=</span> (<span class='ident'>row</span>, <span class='ident'>col</span>);
 
         <span class='comment'>// draw new cursor if it is on the screen</span>
-        <span class='kw'>const</span> <span class='ident'>VGA_CMD</span>: <span class='ident'>u16</span> <span class='op'>=</span> <span class='number'>0x3d4</span>;
-        <span class='kw'>const</span> <span class='ident'>VGA_DATA</span>: <span class='ident'>u16</span> <span class='op'>=</span> <span class='number'>0x3d5</span>;
-
-        <span class='kw'>let</span> (<span class='ident'>row</span>, <span class='ident'>col</span>) <span class='op'>=</span> <span class='ident'>pos</span>;
         <span class='kw'>let</span> <span class='ident'>cursor_offset</span> <span class='op'>=</span> (<span class='ident'>row</span> <span class='op'>*</span> <span class='ident'>COLS</span> <span class='op'>+</span> <span class='ident'>col</span>) <span class='kw'>as</span> <span class='ident'>u16</span>;
         <span class='kw'>let</span> <span class='ident'>lsb</span> <span class='op'>=</span> (<span class='ident'>cursor_offset</span> <span class='kw-2'>&amp;</span> <span class='number'>0xFF</span>) <span class='kw'>as</span> <span class='ident'>u8</span>;
         <span class='kw'>let</span> <span class='ident'>msb</span> <span class='op'>=</span> (<span class='ident'>cursor_offset</span> <span class='op'>&gt;&gt;</span> <span class='number'>8</span>) <span class='kw'>as</span> <span class='ident'>u8</span>;
 
         <span class='kw'>if</span> <span class='ident'>row</span> <span class='op'>&lt;</span> <span class='ident'>ROWS</span> <span class='op'>&amp;&amp;</span> <span class='ident'>col</span> <span class='op'>&lt;</span> <span class='ident'>COLS</span> {
             <span class='kw'>unsafe</span> {
-                <span class='ident'>machine</span>::<span class='ident'>outb</span>(<span class='ident'>VGA_CMD</span>, <span class='number'>0x0f</span>);
-                <span class='ident'>machine</span>::<span class='ident'>outb</span>(<span class='ident'>VGA_DATA</span>, <span class='ident'>lsb</span>);
-                <span class='ident'>machine</span>::<span class='ident'>outb</span>(<span class='ident'>VGA_CMD</span>, <span class='number'>0x0e</span>);
-                <span class='ident'>machine</span>::<span class='ident'>outb</span>(<span class='ident'>VGA_DATA</span>, <span class='ident'>msb</span>);
+                <span class='ident'>outb</span>(<span class='ident'>VGA_CMD</span>, <span class='number'>0x0f</span>);
+                <span class='ident'>outb</span>(<span class='ident'>VGA_DATA</span>, <span class='ident'>lsb</span>);
+                <span class='ident'>outb</span>(<span class='ident'>VGA_CMD</span>, <span class='number'>0x0e</span>);
+                <span class='ident'>outb</span>(<span class='ident'>VGA_DATA</span>, <span class='ident'>msb</span>);
             }
         }
     }

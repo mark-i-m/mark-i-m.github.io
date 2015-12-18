@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["init",""]],"static":[["CURRENT_PROCESS",""]]});
