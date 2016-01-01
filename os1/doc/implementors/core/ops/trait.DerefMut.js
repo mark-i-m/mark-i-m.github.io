@@ -1,5 +1,5 @@
 (function() {var implementors = {};
-implementors['rustcode'] = ["impl&lt;'semaphore, T&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.DerefMut.html' title='core::ops::DerefMut'>DerefMut</a> for <a class='struct' href='rustcode/data_structures/concurrency/struct.SemaphoreGuard.html' title='rustcode::data_structures::concurrency::SemaphoreGuard'>SemaphoreGuard</a>&lt;'semaphore, T&gt;",];
+implementors['os1'] = ["impl&lt;'semaphore, T&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.DerefMut.html' title='core::ops::DerefMut'>DerefMut</a> for <a class='struct' href='os1/concurrency/struct.SemaphoreGuard.html' title='os1::concurrency::SemaphoreGuard'>SemaphoreGuard</a>&lt;'semaphore, T&gt;",];
 
             if (window.register_implementors) {
                 window.register_implementors(implementors);

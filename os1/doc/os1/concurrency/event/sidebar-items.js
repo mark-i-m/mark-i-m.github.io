@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Event","An Event data structure."]]});

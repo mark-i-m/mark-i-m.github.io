@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Barrier","A Barrier implementation."]]});

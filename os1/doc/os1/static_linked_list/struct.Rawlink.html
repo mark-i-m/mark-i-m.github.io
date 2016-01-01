@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Rawlink` struct in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Rawlink">
+
+    <title>os1::static_linked_list::Rawlink - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>os1</a>::<wbr><a href='index.html'>static_linked_list</a></p><script>window.sidebarCurrent = {name: 'Rawlink', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>os1</a>::<wbr><a href='index.html'>static_linked_list</a>::<wbr><a class='struct' href=''>Rawlink</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-450' class='srclink' href='../../src/os1/static_linked_list.rs.html#42-44' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>struct Rawlink&lt;T&gt; {
+    p: *mut T,
+}</pre><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.p'><code>p</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;T&gt; <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h3><div class='docblock'><p>Rawlink is a type like Option<T> but for holding a raw pointer</p>
+</div><div class='impl-items'><h4 id='method.none' class='method'><code>const fn <a href='#method.none' class='fnname'>none</a>() -&gt; <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Like Option::None for Rawlink</p>
+</div><h4 id='method.some' class='method'><code>fn <a href='#method.some' class='fnname'>some</a>(n: &amp;mut T) -&gt; <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Like Option::Some for Rawlink</p>
+</div><h4 id='method.resolve' class='method'><code>unsafe fn <a href='#method.resolve' class='fnname'>resolve</a>&lt;'a&gt;(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;'a T&gt;</code></h4>
+<div class='docblock'><p>Convert the <code>Rawlink</code> into an Option value</p>
+
+<p><strong>unsafe</strong> because:</p>
+
+<ul>
+<li>Dereference of raw pointer.</li>
+<li>Returns reference of arbitrary lifetime.</li>
+</ul>
+</div><h4 id='method.resolve_mut' class='method'><code>unsafe fn <a href='#method.resolve_mut' class='fnname'>resolve_mut</a>&lt;'a&gt;(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;'a mut T&gt;</code></h4>
+<div class='docblock'><p>Convert the <code>Rawlink</code> into an Option value</p>
+
+<p><strong>unsafe</strong> because:</p>
+
+<ul>
+<li>Dereference of raw pointer.</li>
+<li>Returns reference of arbitrary lifetime.</li>
+</ul>
+</div><h4 id='method.take' class='method'><code>fn <a href='#method.take' class='fnname'>take</a>(&amp;mut self) -&gt; <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Return the <code>Rawlink</code> and replace with <code>Rawlink::none()</code></p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;T&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h3><div class='impl-items'></div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Send.html' title='core::marker::Send'>Send</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Send.html' title='core::marker::Send'>Send</a> for <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h3><div class='impl-items'></div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html' title='core::marker::Sync'>Sync</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html' title='core::marker::Sync'>Sync</a> for <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h3><div class='impl-items'></div><h3 class='impl'><code>impl&lt;'a, T&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;&amp;'a mut <a class='type' href='../../os1/static_linked_list/type.Link.html' title='os1::static_linked_list::Link'>Link</a>&lt;T&gt;&gt; for <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;<a class='struct' href='../../os1/static_linked_list/struct.Node.html' title='os1::static_linked_list::Node'>Node</a>&lt;T&gt;&gt;</code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(node: &amp;'a mut <a class='type' href='../../os1/static_linked_list/type.Link.html' title='os1::static_linked_list::Link'>Link</a>&lt;T&gt;) -&gt; Self</code></h4>
+</div><h3 class='impl'><code>impl&lt;T&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../os1/static_linked_list/struct.Rawlink.html' title='os1::static_linked_list::Rawlink'>Rawlink</a>&lt;T&gt;</code></h4>
+<h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

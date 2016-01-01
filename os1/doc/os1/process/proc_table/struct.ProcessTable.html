@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ProcessTable` struct in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ProcessTable">
+
+    <title>os1::process::proc_table::ProcessTable - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>process</a>::<wbr><a href='index.html'>proc_table</a></p><script>window.sidebarCurrent = {name: 'ProcessTable', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>process</a>::<wbr><a href='index.html'>proc_table</a>::<wbr><a class='struct' href=''>ProcessTable</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1782' class='srclink' href='../../../src/os1/process/proc_table.rs.html#21-29' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct ProcessTable {
+    pt_head: *mut <a class='struct' href='../../../os1/process/proc_table/struct.ProcessTableNode.html' title='os1::process::proc_table::ProcessTableNode'>ProcessTableNode</a>,
+    first_pid: usize,
+    capacity: usize,
+    size: usize,
+}</pre><div class='docblock'><p>A process table implemented as an indexable deque</p>
+</div><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.pt_head'><code>pt_head</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.first_pid'><code>first_pid</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.capacity'><code>capacity</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.size'><code>size</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../os1/process/proc_table/struct.ProcessTable.html' title='os1::process::proc_table::ProcessTable'>ProcessTable</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>const fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../../os1/process/proc_table/struct.ProcessTable.html' title='os1::process::proc_table::ProcessTable'>ProcessTable</a></code></h4>
+<h4 id='method.push' class='method'><code>fn <a href='#method.push' class='fnname'>push</a>(&amp;mut self, p: *mut <a class='struct' href='../../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a>)</code></h4>
+<div class='docblock'><p>Add the new process to the end of the Table. Since processes
+are created with sequential PIDs, we already know the PID.</p>
+</div><h4 id='method.remove' class='method'><code>fn <a href='#method.remove' class='fnname'>remove</a>(&amp;mut self, pid: usize)</code></h4>
+<div class='docblock'><p>Void the entry in the table. This should be done just before
+deallocating the process.</p>
+</div><h4 id='method.get' class='method'><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;self, pid: usize) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;*mut <a class='struct' href='../../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a>&gt;</code></h4>
+<div class='docblock'><p>Get the process with the matching PID</p>
+</div><h4 id='method.free' class='method'><code>fn <a href='#method.free' class='fnname'>free</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Free as many <code>ProcessTableNode</code>s as possible</p>
+</div><h4 id='method.get_node' class='method'><code>fn <a href='#method.get_node' class='fnname'>get_node</a>(&amp;self, pid: usize) -&gt; &amp;'static <a class='struct' href='../../../os1/process/proc_table/struct.ProcessTableNode.html' title='os1::process::proc_table::ProcessTableNode'>ProcessTableNode</a></code></h4>
+<div class='docblock'><p>Get the node containing the given PID</p>
+</div><h4 id='method.get_node_mut' class='method'><code>fn <a href='#method.get_node_mut' class='fnname'>get_node_mut</a>(&amp;mut self, pid: usize) -&gt; &amp;'static mut <a class='struct' href='../../../os1/process/proc_table/struct.ProcessTableNode.html' title='os1::process::proc_table::ProcessTableNode'>ProcessTableNode</a></code></h4>
+<div class='docblock'><p>Get the node containing the given PID</p>
+</div><h4 id='method.get_last_node' class='method'><code>fn <a href='#method.get_last_node' class='fnname'>get_last_node</a>(&amp;mut self) -&gt; &amp;'static mut <a class='struct' href='../../../os1/process/proc_table/struct.ProcessTableNode.html' title='os1::process::proc_table::ProcessTableNode'>ProcessTableNode</a></code></h4>
+<div class='docblock'><p>Get the last node in the table</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `AddressSpace` struct in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, AddressSpace">
+
+    <title>os1::memory::AddressSpace - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>os1</a>::<wbr><a href='index.html'>memory</a></p><script>window.sidebarCurrent = {name: 'AddressSpace', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>os1</a>::<wbr><a href='index.html'>memory</a>::<wbr><a class='struct' href=''>AddressSpace</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1517' class='srclink' href='../../src/os1/memory/vm/addr_space.rs.html#13-38' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct AddressSpace {
+    page_dir: usize,
+    kmap_index: u8,
+    lock: <a class='struct' href='../../os1/concurrency/struct.StaticSemaphore.html' title='os1::concurrency::StaticSemaphore'>StaticSemaphore</a>,
+    req_pid: usize,
+    req_paddr: usize,
+    req_bar: <a class='struct' href='../../os1/concurrency/struct.Barrier.html' title='os1::concurrency::Barrier'>Barrier</a>,
+    req_wait: <a class='struct' href='../../os1/concurrency/struct.Event.html' title='os1::concurrency::Event'>Event</a>,
+}</pre><div class='docblock'><p>The address space of a single process</p>
+</div><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.page_dir'><code>page_dir</code></td><td><div class='docblock'><p>paddr of this addr space&#39;s PD</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.kmap_index'><code>kmap_index</code></td><td><div class='docblock'><p>the index of the first un-kmapped page</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.lock'><code>lock</code></td><td><div class='docblock'><p>a lock for the address space</p>
+
+<p>NOTE: to prevent deadlocks, <em>ALWAYS</em> acquire
+this lock before locks on frames.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.req_pid'><code>req_pid</code></td><td><div class='docblock'><p>The PID of the process the current share request is going to</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.req_paddr'><code>req_paddr</code></td><td><div class='docblock'><p>The frame the current share request is for</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.req_bar'><code>req_bar</code></td><td><div class='docblock'><p>A barrier for page-sharing</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.req_wait'><code>req_wait</code></td><td><div class='docblock'><p>A waiting list for other processes who are expecting this
+process to share with them</p>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../os1/memory/struct.AddressSpace.html' title='os1::memory::AddressSpace'>AddressSpace</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../os1/memory/struct.AddressSpace.html' title='os1::memory::AddressSpace'>AddressSpace</a></code></h4>
+<div class='docblock'><p>Create a new address space and set up the PD.</p>
+</div><h4 id='method.map' class='method'><code>fn <a href='#method.map' class='fnname'>map</a>(&amp;mut self, phys: usize, virt: usize, lock: bool)</code></h4>
+<div class='docblock'><p>Map <code>virt</code> to <code>phys</code> in the address space. The method first
+tries to acquire the address space lock if <code>lock</code> is true.</p>
+
+<p>NOTE: should only be called on the current address space
+because it assumes that the PD is at PD_ADDRESS</p>
+</div><h4 id='method.kmap' class='method'><code>fn <a href='#method.kmap' class='fnname'>kmap</a>(&amp;mut self, paddr: usize) -&gt; &amp;mut <a class='struct' href='../../os1/memory/physmem/struct.Frame.html' title='os1::memory::physmem::Frame'>Frame</a></code></h4>
+<div class='docblock'><p>Map the given <code>paddr</code> for temporary use by the kernel and return a mut reference to the
+frame.
+NOTE: should only be called on the current address space because it assumes that the PD is
+at PD_ADDRESS</p>
+</div><h4 id='method.unmap' class='method'><code>fn <a href='#method.unmap' class='fnname'>unmap</a>(&amp;mut self, virt: usize, lock: bool)</code></h4>
+<div class='docblock'><p>Remove any mapping for this virtual address. The method first tries to acquire the address
+space lock if <code>lock</code> is true.</p>
+
+<p>NOTE: should only be called on the current address space because it assumes that the PD is
+at PD_ADDRESS</p>
+</div><h4 id='method.v_to_p' class='method'><code>fn <a href='#method.v_to_p' class='fnname'>v_to_p</a>(&amp;mut self, virt: usize, lock: bool) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;usize&gt;</code></h4>
+<div class='docblock'><p>Returns the current physical address mapped to the given virtual address
+or None if it is not mapped. The method first tries to acquire the address
+space lock if <code>lock</code> is true.</p>
+
+<p>NOTE: this has to run while the addresss space is active.</p>
+</div><h4 id='method.activate' class='method'><code>fn <a href='#method.activate' class='fnname'>activate</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Activate the current address space and turn on VM if needed</p>
+</div><h4 id='method.request_share' class='method'><code>fn <a href='#method.request_share' class='fnname'>request_share</a>(&amp;mut self, pid: usize, vaddr: usize) -&gt; bool</code></h4>
+<div class='docblock'><p>Send a page-share request to the process with PID <code>pid</code> for
+the frame mapped to <code>vaddr</code> in this address space.</p>
+
+<p>Returns true if the request succeeded, and false if there was
+an error (e.g. the process has already died).</p>
+
+<p>Blocks until the request is accepted.</p>
+
+<p>NOTE: this has to run while the addresss space is active.</p>
+</div><h4 id='method.accept_share' class='method'><code>fn <a href='#method.accept_share' class='fnname'>accept_share</a>(&amp;mut self, pid: usize, vaddr: usize) -&gt; bool</code></h4>
+<div class='docblock'><p>Creates a mapping in this process&#39;s address space for the
+first page-share request from the process with the given PID
+to the given page.</p>
+
+<p>Returns true if success; false otherwise.</p>
+
+<p>Blocks until the request is completed.</p>
+
+<p>NOTE: This should run inside this processes address space</p>
+</div><h4 id='method.clear' class='method'><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Remove all non-kernel mappings in this address space.
+NOTE: must run while this address space is active</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../os1/memory/struct.AddressSpace.html' title='os1::memory::AddressSpace'>AddressSpace</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

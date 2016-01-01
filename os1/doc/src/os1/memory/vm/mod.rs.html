@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `memory/vm/mod.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>mod.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+</pre><pre class='rust '>
+<span class='doccomment'>//! A module for virtual memory management</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! The virtual address space of a process consists of all addresses for 0xD0_0000-0xFFFF_FFFF.</span>
+<span class='doccomment'>//! When a page fault occurs (in kernel or user mode), if the faulting address is in this range,</span>
+<span class='doccomment'>//! the fault is considered an error, and the process is killed. This is because the first 8MiB are</span>
+<span class='doccomment'>//! shared, direct-mapped memory and should never produce a page fault. The next 4MiB are mapped to</span>
+<span class='doccomment'>//! the processes page directory, so if there is a fault in this range, it is fatal, since it means</span>
+<span class='doccomment'>//! the paging structures have been corrupt. The 13MiB is claimed by the kernel for use by the kmap</span>
+<span class='doccomment'>//! function, which temporarily maps a page meant to reside in another process&#39;s address space.</span>
+<span class='doccomment'>//! This is needed for creating a new process. Luckly, with Rust, segfaults should be extremely</span>
+<span class='doccomment'>//! rare.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! When a page fault occurs for a legal address, the fault handler checks the following cases:</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! 1. Is the page paged out to disk? If so, swap it back in</span>
+<span class='doccomment'>//! 2. Is the page marked present but read-only? If so, this page is COW, so clone it and mark the</span>
+<span class='doccomment'>//!    new page read/write</span>
+<span class='doccomment'>//! 3. Else, allocate a new frame a map the page to it</span>
+
+<span class='kw'>mod</span> <span class='ident'>structs</span>;
+<span class='kw'>mod</span> <span class='ident'>addr_space</span>;
+
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>addr_space</span>::{<span class='ident'>AddressSpace</span>, <span class='ident'>vmm_page_fault</span>};
+
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::<span class='ident'>page_fault_handler</span>;
+
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>add_trap_handler</span>};
+
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>static_linked_list</span>::<span class='ident'>StaticLinkedList</span>;
+
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>physmem</span>::<span class='ident'>Frame</span>;
+
+<span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>structs</span>::{<span class='ident'>VMTable</span>, <span class='ident'>PagingEntry</span>};
+
+<span class='doccomment'>/// A list of shared PDEs direct mapping the beginning of memory</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>SHARED_PDES</span>: <span class='ident'>StaticLinkedList</span><span class='op'>&lt;</span><span class='ident'>PagingEntry</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>StaticLinkedList</span>::<span class='ident'>new</span>();
+
+<span class='doccomment'>/// The number of shared PDEs (for convenience)</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>NUM_SHARED</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+
+<span class='doccomment'>/// The virtual address to which the PD is mapped</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>PD_ADDRESS</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VMTable</span> <span class='op'>=</span> <span class='number'>0</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VMTable</span>;
+
+<span class='doccomment'>/// The beginning of kmap memory</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>KMAP_ADDRESS</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+
+<span class='doccomment'>/// The beginning of user memory</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>USER_ADDRESS</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
+
+<span class='doccomment'>/// Is VM on?</span>
+<span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>VMM_ON</span>: <span class='ident'>bool</span> <span class='op'>=</span> <span class='boolval'>false</span>;
+
+<span class='doccomment'>/// Create `n` PDEs to direct map the memory start from the `i`th page.</span>
+<span class='doccomment'>/// unsafe because it deals with raw pointers and static muts.</span>
+<span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>init_shared_pdes</span>(<span class='ident'>n</span>: <span class='ident'>usize</span>, <span class='kw-2'>mut</span> <span class='ident'>i</span>: <span class='ident'>usize</span>) {
+    <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='ident'>n</span> {
+        <span class='comment'>// create the page table and pde</span>
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>pde</span> <span class='op'>=</span> <span class='ident'>PagingEntry</span>::<span class='ident'>new</span>();
+
+        <span class='ident'>pde</span>.<span class='ident'>set_present</span>(<span class='boolval'>true</span>); <span class='comment'>// present</span>
+        <span class='ident'>pde</span>.<span class='ident'>set_read_write</span>(<span class='boolval'>true</span>); <span class='comment'>// read/write</span>
+        <span class='ident'>pde</span>.<span class='ident'>set_privelege_level</span>(<span class='boolval'>false</span>); <span class='comment'>// kernel only</span>
+        <span class='ident'>pde</span>.<span class='ident'>set_caching</span>(<span class='boolval'>false</span>); <span class='comment'>// write-back</span>
+        <span class='ident'>pde</span>.<span class='ident'>set_address</span>(<span class='ident'>Frame</span>::<span class='ident'>alloc</span>()); <span class='comment'>// alloc a new PT</span>
+
+        <span class='comment'>// map direct map except page 0</span>
+        <span class='kw'>let</span> <span class='ident'>pt</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span>(<span class='ident'>pde</span>.<span class='ident'>get_address</span>() <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VMTable</span>);
+        <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> (<span class='kw'>if</span> <span class='ident'>i</span> <span class='op'>==</span> <span class='number'>0</span> {<span class='number'>1</span>} <span class='kw'>else</span> {<span class='number'>0</span>})..<span class='number'>1024</span> {
+            <span class='ident'>pt</span>[<span class='ident'>e</span>] <span class='op'>=</span> <span class='ident'>PagingEntry</span>::<span class='ident'>new</span>();
+            <span class='ident'>pt</span>[<span class='ident'>e</span>].<span class='ident'>set_present</span>(<span class='boolval'>true</span>); <span class='comment'>// present</span>
+            <span class='ident'>pt</span>[<span class='ident'>e</span>].<span class='ident'>set_read_write</span>(<span class='boolval'>true</span>); <span class='comment'>// read/write</span>
+            <span class='ident'>pt</span>[<span class='ident'>e</span>].<span class='ident'>set_privelege_level</span>(<span class='boolval'>false</span>); <span class='comment'>// kernel only</span>
+            <span class='ident'>pt</span>[<span class='ident'>e</span>].<span class='ident'>set_caching</span>(<span class='boolval'>false</span>); <span class='comment'>// write-back</span>
+            <span class='ident'>pt</span>[<span class='ident'>e</span>].<span class='ident'>set_address</span>(((<span class='ident'>i</span><span class='op'>&lt;&lt;</span><span class='number'>10</span>)<span class='op'>+</span><span class='ident'>e</span>) <span class='op'>&lt;&lt;</span> <span class='number'>12</span>); <span class='comment'>// PD paddr</span>
+        }
+
+        <span class='ident'>SHARED_PDES</span>.<span class='ident'>push_back</span>(<span class='ident'>pde</span>);
+
+        <span class='ident'>i</span> <span class='op'>+=</span> <span class='number'>1</span>;
+    }
+}
+
+<span class='doccomment'>/// Initialize virtual memory management but do not turn on VM.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// This creates the shared page tables that map the first beginning of memory.</span>
+<span class='doccomment'>/// It also registers the `page_fault_handler`.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// All memory before `start` is direct mapped. The first 4MiB after `start are</span>
+<span class='doccomment'>/// mapped to the page directory. The next MiB is reserved kernel memory.</span>
+<span class='doccomment'>/// `start` must be 4MiB aligned.</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>(<span class='ident'>start</span>: <span class='ident'>usize</span>) {
+
+    <span class='kw'>if</span> <span class='ident'>start</span> <span class='op'>%</span> (<span class='number'>4</span><span class='op'>&lt;&lt;</span><span class='number'>20</span>) <span class='op'>!=</span> <span class='number'>0</span> {
+        <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;virt mem start must be 4MiB aligned&quot;</span>);
+    }
+
+    <span class='comment'>// Create the shared PDEs</span>
+    <span class='comment'>// Each PDE maps 4MiB (2^22)</span>
+    <span class='kw'>unsafe</span> {
+        <span class='ident'>init_shared_pdes</span>(<span class='ident'>start</span> <span class='op'>&gt;&gt;</span> <span class='number'>22</span>, <span class='number'>0</span>);
+        <span class='ident'>NUM_SHARED</span> <span class='op'>=</span> <span class='ident'>SHARED_PDES</span>.<span class='ident'>len</span>();
+        <span class='ident'>PD_ADDRESS</span> <span class='op'>=</span> ((<span class='ident'>NUM_SHARED</span><span class='op'>&lt;&lt;</span><span class='number'>22</span>) <span class='op'>|</span> (<span class='ident'>NUM_SHARED</span><span class='op'>&lt;&lt;</span><span class='number'>12</span>)) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>VMTable</span>;
+        <span class='ident'>KMAP_ADDRESS</span> <span class='op'>=</span> (<span class='ident'>NUM_SHARED</span><span class='op'>+</span><span class='number'>1</span>) <span class='op'>&lt;&lt;</span> <span class='number'>22</span>;
+        <span class='ident'>USER_ADDRESS</span> <span class='op'>=</span> ((<span class='ident'>NUM_SHARED</span><span class='op'>+</span><span class='number'>1</span>) <span class='op'>&lt;&lt;</span> <span class='number'>22</span>) <span class='op'>+</span> (<span class='number'>1</span><span class='op'>&lt;&lt;</span><span class='number'>20</span>);
+    }
+
+    <span class='comment'>// Register page fault handler</span>
+    <span class='ident'>add_trap_handler</span>(<span class='number'>14</span>, <span class='ident'>page_fault_handler</span>, <span class='number'>0</span>);
+
+    <span class='macro'>bootlog</span><span class='macro'>!</span>(<span class='string'>&quot;virt mem inited - start addr: 0x{:X}\n&quot;</span>, <span class='ident'>start</span>);
+}
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../../jquery.js"></script>
+    <script src="../../../../main.js"></script>
+    
+    <script async src="../../../../search-index.js"></script>
+</body>
+</html>

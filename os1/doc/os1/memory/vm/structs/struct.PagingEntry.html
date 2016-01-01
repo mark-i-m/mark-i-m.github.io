@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `PagingEntry` struct in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, PagingEntry">
+
+    <title>os1::memory::vm::structs::PagingEntry - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../../index.html'>os1</a>::<wbr><a href='../../index.html'>memory</a>::<wbr><a href='../index.html'>vm</a>::<wbr><a href='index.html'>structs</a></p><script>window.sidebarCurrent = {name: 'PagingEntry', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../../index.html'>os1</a>::<wbr><a href='../../index.html'>memory</a>::<wbr><a href='../index.html'>vm</a>::<wbr><a href='index.html'>structs</a>::<wbr><a class='struct' href=''>PagingEntry</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1445' class='srclink' href='../../../../src/os1/memory/vm/structs.rs.html#22-24' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct PagingEntry {
+    entry: usize,
+}</pre><div class='docblock'><p>A single entry in a page directory or table
+<code>31 12 9 0 [ 000 flags ]</code></p>
+</div><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.entry'><code>entry</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../../os1/memory/vm/structs/struct.PagingEntry.html' title='os1::memory::vm::structs::PagingEntry'>PagingEntry</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>const fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../../../os1/memory/vm/structs/struct.PagingEntry.html' title='os1::memory::vm::structs::PagingEntry'>PagingEntry</a></code></h4>
+<div class='docblock'><p>Get a blank entry</p>
+</div><h4 id='method.set_present' class='method'><code>fn <a href='#method.set_present' class='fnname'>set_present</a>(&amp;mut self, value: bool)</code></h4>
+<div class='docblock'><p>Set the present bit.
+true = present; false = not present</p>
+</div><h4 id='method.set_read_write' class='method'><code>fn <a href='#method.set_read_write' class='fnname'>set_read_write</a>(&amp;mut self, value: bool)</code></h4>
+<div class='docblock'><p>Set the read/write bit.
+true = read/write, false = read-only</p>
+</div><h4 id='method.set_privelege_level' class='method'><code>fn <a href='#method.set_privelege_level' class='fnname'>set_privelege_level</a>(&amp;mut self, value: bool)</code></h4>
+<div class='docblock'><p>Set the privelege level bit.
+true = all, false = kernel mode only</p>
+</div><h4 id='method.set_caching' class='method'><code>fn <a href='#method.set_caching' class='fnname'>set_caching</a>(&amp;mut self, value: bool)</code></h4>
+<div class='docblock'><p>Set caching bit.
+true = write-through, false = write-back</p>
+</div><h4 id='method.set_flag' class='method'><code>fn <a href='#method.set_flag' class='fnname'>set_flag</a>(&amp;mut self, index: u8, value: bool)</code></h4>
+<div class='docblock'><p>Set the <code>index</code>-th flag to <code>value</code>.
+true = 1; false = 0</p>
+</div><h4 id='method.set_address' class='method'><code>fn <a href='#method.set_address' class='fnname'>set_address</a>(&amp;mut self, address: usize)</code></h4>
+<div class='docblock'><p>Set the upper 20 bits of the entry to the upper 20 bits of <code>address</code></p>
+</div><h4 id='method.is_flag' class='method'><code>fn <a href='#method.is_flag' class='fnname'>is_flag</a>(&amp;self, index: u8) -&gt; bool</code></h4>
+<div class='docblock'><p>Return true if the <code>index</code>-th bit is set</p>
+</div><h4 id='method.get_address' class='method'><code>fn <a href='#method.get_address' class='fnname'>get_address</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Return the upper 20-bits of the entry</p>
+</div><h4 id='method.free' class='method'><code>fn <a href='#method.free' class='fnname'>free</a>(&amp;mut self, dealloc: bool)</code></h4>
+<div class='docblock'><p>Free the frame pointed to if <code>dealloc</code> and mark this entry not present.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../../os1/memory/vm/structs/struct.PagingEntry.html' title='os1::memory::vm::structs::PagingEntry'>PagingEntry</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../../os1/memory/vm/structs/struct.PagingEntry.html' title='os1::memory::vm::structs::PagingEntry'>PagingEntry</a></code></h4>
+<h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='struct' href='../../../../os1/memory/vm/structs/struct.PagingEntry.html' title='os1::memory::vm::structs::PagingEntry'>PagingEntry</a></code></h3><div class='impl-items'></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../../jquery.js"></script>
+    <script src="../../../../main.js"></script>
+    
+    <script async src="../../../../search-index.js"></script>
+</body>
+</html>

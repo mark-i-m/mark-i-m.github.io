@@ -281,15 +281,91 @@
 
     {
         // acquire
-        let guard = s.clone();
+        let guard = s.down();
     }
     // guard dies => release
+    </code></pre>
+
+    <h2>Barriers and Events</h2>
+
+    <p>
+    os1 also has two other semaphore-based concurrency primitives. The first is
+    <code>Barrier</code>. When the barrier is constructed, it is given a parameter
+    <code>N</code>. The first <code>N-1</code> processes that reach the barrier
+    will block. When the <code>N</code>th process reaches the barrier, all processes
+    will unblock from the barrier.
+    </p>
+
+    <pre><code class="language-rust">
+    let b = Barrier::new(3); // A barrier for 3 processes
+
+    ...
+
+    // In process A
+
+    b.reach();
+    // If this is the 3rd process to reach the barrier, the first two will unblock;
+    // otherwise, this process will block until the third reaches the barrier.
+    </code></pre>
+
+    <p>
+    The second primitive is <code>Event</code>. When a process waits on the event, it
+    will block until someone &quot;notifies&quot; the event. An unlimited number of
+    processes can wait on an event.
+    </p>
+
+    <pre><code class="language-rust">
+    let e = Event::new(); // An event
+
+    ...
+
+    // In process A
+
+    e.wait(); // Process A blocks
+
+    ...
+
+    // In process B
+    e.notify(); // Wakes up Process A and any others waiting
+    </code></pre>
+
+    <h1>Inter-process Communication (IPC)</h1>
+
+    <p>
+    In os1, IPC is accomplished via shared pages. A process can request to share
+    a page with another process. It will block until the other process accepts the
+    request. Symmetrically, a process can request another process to share a page
+    with it, and it will block until the request is fullfilled.
+    </p>
+
+    <pre><code class="language-rust">
+    // In process A
+
+    // This call will share with the process with PID = 3 the frame mapped to 0xC000_0000.
+    // The process will block until this call returns.
+    if !(*CURRENT_PROCESS).addr_space.request_share(/* pid */ 3, /* vaddr */ 0xC000_0000) {
+        // If the call returns false, then an error has occured (e.g. process 3 died)
+    }
+
+    ...
+
+    // In process B
+
+    // This call will accept a shared page from the process with PID = 2. The accepted frame
+    // will be mapped to 0xD000_0000 in this address space. Note that this address does not
+    // have to be the same as the sharing process. This process process will block until the
+    // call returns
+    if !(*CURRENT_PROCESS).addr_space.accept_share(/* pid */ 2, /* vaddr */ 0xD000_0000) {
+        // If the call returns false, then an error has occured (e.g. process 2 died)
+    }
     </code></pre>
 
     <h1>Display driver</h1>
 
     <p>
-    TODO
+    os1 has a primitive display driver for QEMU in VGA mode. It features some very basic
+    abstractions to make drawing and printing strings easier. Including bounded boxes and
+    word wrap.
     </p>
 </div>
 </body>

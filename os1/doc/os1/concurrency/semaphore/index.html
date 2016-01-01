@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `semaphore` mod in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, semaphore">
+
+    <title>os1::concurrency::semaphore - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>concurrency</a></p><script>window.sidebarCurrent = {name: 'semaphore', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>concurrency</a>::<wbr><a class='mod' href=''>semaphore</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-788' class='srclink' href='../../../src/os1/concurrency/semaphore.rs.html#1-151' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>A semaphore implementation based on the rust Mutex<T> type</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::sync::atomic::{<a class='struct' href='https://doc.rust-lang.org/nightly/core/sync/atomic/struct.AtomicIsize.html' title='core::sync::atomic::AtomicIsize'>AtomicIsize</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/sync/atomic/enum.Ordering.html' title='core::sync::atomic::Ordering'>Ordering</a>};</code></td></tr><tr><td><code>use core::cell::<a class='struct' href='https://doc.rust-lang.org/nightly/core/cell/struct.UnsafeCell.html' title='core::cell::UnsafeCell'>UnsafeCell</a>;</code></td></tr><tr><td><code>use core::ops::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html' title='core::ops::Deref'>Deref</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.DerefMut.html' title='core::ops::DerefMut'>DerefMut</a>};</code></td></tr><tr><td><code>use alloc::boxed::<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>;</code></td></tr><tr><td><code>use super::super::interrupts::{<a class='fn' href='../../../os1/interrupts/fn.on.html' title='os1::interrupts::on'>on</a>, <a class='fn' href='../../../os1/interrupts/fn.off.html' title='os1::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::super::process::{<a class='mod' href='../../../os1/process/ready_queue/index.html' title='os1::process::ready_queue'>ready_queue</a>, <a class='fn' href='../../../os1/process/fn.proc_yield.html' title='os1::process::proc_yield'>proc_yield</a>, <a class='type' href='../../../os1/process/type.ProcessQueue.html' title='os1::process::ProcessQueue'>ProcessQueue</a>};</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Semaphore.html'
+                               title='os1::concurrency::semaphore::Semaphore'>Semaphore</a></td>
+                        <td class='docblock short'>
+                             <p><code>Semaphore</code> is a much more Rustic semaphore. It returns an RAII
+<code>SemaphoreGuard</code>, which automatically calls &quot;up&quot; when it goes out of
+scope. This semaphore takes ownership of the data it is guarding, so that
+Rust ownership and lifetime semantics can be used to guarantee safety of
+the resource.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.SemaphoreGuard.html'
+                               title='os1::concurrency::semaphore::SemaphoreGuard'>SemaphoreGuard</a></td>
+                        <td class='docblock short'>
+                             <p>RAII SemaphoreGuard</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.StaticSemaphore.html'
+                               title='os1::concurrency::semaphore::StaticSemaphore'>StaticSemaphore</a></td>
+                        <td class='docblock short'>
+                             <p><code>StaticSemaphore</code> is a semaphore implementation that can be used in
+statics. It has a const constructor.</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>

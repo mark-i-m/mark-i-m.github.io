@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["PagingEntry","A single entry in a page directory or table ``` 31                 12  9       0 [                    000 flags  ] ```"],["VMTable","An abstraction of page directories and page tables"]]});

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Block` struct in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Block">
+
+    <title>os1::memory::heap::Block - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>memory</a>::<wbr><a href='index.html'>heap</a></p><script>window.sidebarCurrent = {name: 'Block', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>memory</a>::<wbr><a href='index.html'>heap</a>::<wbr><a class='struct' href=''>Block</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1093' class='srclink' href='../../../src/os1/memory/heap.rs.html#63' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>struct Block;</pre><div class='docblock'><p>A struct representing a heap block.</p>
+
+<p>It is empty because, by nature, heap blocks are variable size. Rather thsn give the compiler
+a hard time, we can just a block fixed size and write methods that are aware of the situation.
+Then, we just need to cast an address into a block pointer. This is a very C-ish solution,
+but it makes life easy because a heap implementation usually has a lot of pointer arithmetic.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a></code></h3><div class='impl-items'><h4 id='method.get_head' class='method'><code>unsafe fn <a href='#method.get_head' class='fnname'>get_head</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Returns the first word of the block, which will contain the size if this is a free block</p>
+</div><h4 id='method.set_head' class='method'><code>unsafe fn <a href='#method.set_head' class='fnname'>set_head</a>(&amp;mut self, head: usize)</code></h4>
+<div class='docblock'><p>Sets the header to the given value</p>
+</div><h4 id='method.get_foot' class='method'><code>unsafe fn <a href='#method.get_foot' class='fnname'>get_foot</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Returns the last word of the block, which will contain the size if this is a free block</p>
+</div><h4 id='method.set_foot' class='method'><code>unsafe fn <a href='#method.set_foot' class='fnname'>set_foot</a>(&amp;mut self, foot: usize)</code></h4>
+<div class='docblock'><p>Sets the footer to the given value</p>
+</div><h4 id='method.get_free_bits' class='method'><code>unsafe fn <a href='#method.get_free_bits' class='fnname'>get_free_bits</a>(&amp;self) -&gt; u8</code></h4>
+<div class='docblock'><p>Gets the 4 free bits of the block</p>
+</div><h4 id='method.set_next' class='method'><code>unsafe fn <a href='#method.set_next' class='fnname'>set_next</a>(&amp;mut self, next: *mut <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a>)</code></h4>
+<div class='docblock'><p>Set the forward pointer (but not the free bits)</p>
+</div><h4 id='method.set_prev' class='method'><code>unsafe fn <a href='#method.set_prev' class='fnname'>set_prev</a>(&amp;mut self, prev: *mut <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a>)</code></h4>
+<div class='docblock'><p>Set the backward pointer</p>
+</div><h4 id='method.is_free' class='method'><code>unsafe fn <a href='#method.is_free' class='fnname'>is_free</a>(&amp;self) -&gt; bool</code></h4>
+<div class='docblock'><p>Returns true if the block is a valid free block.
+This method does a lot of sanity checiking</p>
+</div><h4 id='method.mark_free' class='method'><code>unsafe fn <a href='#method.mark_free' class='fnname'>mark_free</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Set the free bits</p>
+</div><h4 id='method.mark_used' class='method'><code>unsafe fn <a href='#method.mark_used' class='fnname'>mark_used</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Clear the free bits.
+The block should already be removed from the free list</p>
+</div><h4 id='method.get_size' class='method'><code>unsafe fn <a href='#method.get_size' class='fnname'>get_size</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Return the size of the block (user-usable data size)</p>
+</div><h4 id='method.set_size' class='method'><code>unsafe fn <a href='#method.set_size' class='fnname'>set_size</a>(&amp;mut self, size: usize)</code></h4>
+<div class='docblock'><p>Set the size of block</p>
+</div><h4 id='method.get_contiguous_next' class='method'><code>unsafe fn <a href='#method.get_contiguous_next' class='fnname'>get_contiguous_next</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the heap block immediately following this one</p>
+</div><h4 id='method.get_contiguous_prev' class='method'><code>unsafe fn <a href='#method.get_contiguous_prev' class='fnname'>get_contiguous_prev</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the heap block immediately preceding this one
+or null if there is no valid previous block.</p>
+</div><h4 id='method.get_free_next' class='method'><code>unsafe fn <a href='#method.get_free_next' class='fnname'>get_free_next</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the forward ptr of the block (excluding the free bits)</p>
+</div><h4 id='method.get_free_prev' class='method'><code>unsafe fn <a href='#method.get_free_prev' class='fnname'>get_free_prev</a>(&amp;self) -&gt; *mut <a class='struct' href='../../../os1/memory/heap/struct.Block.html' title='os1::memory::heap::Block'>Block</a></code></h4>
+<div class='docblock'><p>Returns the backward ptr of the block</p>
+</div><h4 id='method.remove' class='method'><code>unsafe fn <a href='#method.remove' class='fnname'>remove</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Remove from free list. Clear forward/backward pointers</p>
+</div><h4 id='method.insert' class='method'><code>unsafe fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Add to head of free list</p>
+</div><h4 id='method.merge_with_next' class='method'><code>unsafe fn <a href='#method.merge_with_next' class='fnname'>merge_with_next</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Merge this block with the next block.
+Removes the second block from the free list before merging</p>
+</div><h4 id='method.split' class='method'><code>unsafe fn <a href='#method.split' class='fnname'>split</a>(&amp;mut self, size: usize)</code></h4>
+<div class='docblock'><p>Split the block so that it is the given size.
+Insert the new block into the free list.
+The block must be large enough to split (<code>&gt;= 2*BLOCK_ALIGN</code>).
+The block must be free.
+The new size must be a multiple of <code>BLOCK_ALIGN</code>.</p>
+</div><h4 id='method.is_match' class='method'><code>unsafe fn <a href='#method.is_match' class='fnname'>is_match</a>(&amp;self, size: usize, align: usize) -&gt; (bool, usize)</code></h4>
+<div class='docblock'><p>Returns true if this block matches the size and alignment.
+Returns the size at which the block should be split to obtain
+an aligned block; the second return value is meaningless if
+we return false.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>
