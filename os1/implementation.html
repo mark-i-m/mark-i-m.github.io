@@ -8,6 +8,32 @@
     <!-- syntax highlighting -->
     <link href="prism.css" rel="stylesheet" />
     <script src="prism.js"></script>
+    <style>
+#ofs-table {
+    width: 100%;
+    background: #ececec;
+}
+
+#ofs-table, #ofs-table tr, #ofs-table td, #ofs-table th {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+}
+
+#ofs-table td, #ofs-table th {
+    padding: 5px;
+}
+
+#ofs-table th {
+    font-weight: bold;
+    text-align: left;
+    background: #e0e0e0;
+}
+
+#ofs-table td:first-child {
+    text-align: center;
+    font-family: monospace;
+}
+    </style>
 </head>
 <body>
 <div id="nav-container-outer">
@@ -25,9 +51,9 @@
 
     <h1>Booting</h1>
     <p>
-    The OS uses a simple bootloader in the MBR of the disk. It was not designed
-    for compatibility; I haven't tested it on any other VM software, other than
-    QEMU.
+    The OS uses a simple two-stage bootloader in the MBR of the disk. It was
+    not designed for compatibility; I haven't tested it on any other VM
+    software, other than QEMU.
     </p>
 
     <p>
@@ -40,16 +66,15 @@
         console, not the VGA display)
         </li>
         <li>
-        Find drive c and copy its contents into memory starting
-        <code>loadKernelHere</code>, which is defined in <code>mbr.S</code>
+        Load the second-stage bootloader from the next segments of memory
         </li>
         <li>
-        If the kernel is longer 64KB (I think), the BIOS instruction used to
-        copy the kernel to memory returns an error and only copies the first
-        64KB. This caused very arcane, hard-to-trace errors later on, so
-        instead, if the kernel is longer than 64KB, the bootloader prints 'e'
-        and hangs. This could be easily fixed by writing a better bootloader,
-        but I want to do more interesting things.
+        Transfer control to the second-stage bootloader, which carries out the
+        rest of these steps:
+        </li>
+        <li>
+        Find copy the kernel from the disk into memory starting
+        <code>loadKernelHere</code>, which is defined in <code>mbr.S</code>
         </li>
         <li>
         Exectute the E820 BIOS call to get a map of available and reserved
@@ -61,8 +86,8 @@
 
     <p>
     All of this is defined in <code>mbr.S</code>. <code>mbr.S</code> also
-    defines the GDT, IDT, TSS table descriptor, and the various segments. These
-    variables are global and can be used elsewhere in the OS source.
+    defines the GDT and IDT and the various segments. These variables are
+    global and can be used elsewhere in the OS source.
     </p>
 
     <h1>Kernel startup</h1>
@@ -73,12 +98,14 @@
     initialized kernel subsystems in the following order:
 
     <ol>
+        <li>Initialize the TSS</li>
         <li>Initialize the kernel heap manager</li>
         <li>Initialize physical memory management</li>
         <li>Create the init and idle processes</li>
         <li>Initialize the PIC</li>
         <li>Initialize the PIT</li>
-        <li>Start the init process</li>
+        <li>Load the root file system from HDD</li>
+        <li>Jump to the init process</li>
     </ol>
     </p>
 
@@ -102,23 +129,28 @@
         is not used when the process is in user-mode)</li>
         <li>Context struct representing the context at which the process was
         interrupted (only valid if the process is NOT running)</li>
+        <li>State (running, blocked, ready, terminated)</li>
         <li>AddressSpace struct with a pointer to that process's page
         directory</li>
-        <li>A function pointer to the process's routine (specified at process
+        <li>Function pointer to the process's routine (specified at process
         creation)</li>
+        <li>Buffer of characters typed while this process had focus</li>
+        <li>Current working file (the os1 equivalent of a `pwd`)</li>
     </ul>
     </p>
 
     <p>
-    Unfortunately, because processes are allocated on the kernel heap, Rust will
-    not allow them to use closures instead of function pointers. It would be
-    nice if we could have each process contain a dynamically bound call using
-    the <code>FnOnce</code> trait (essentially a thunk), but
-    <code>FnOnce</code>'s <code>call</code> method moves the <code>FnOnce</code>
-    out of the process, which is not allowed because process is heap allocated
-    and has a destructor. There is an open RFC about the <code>Box<FnBox></code>
-    constuct, which would allow the desired behavior, but it is not working yet.
-    If this RFC was implemented, we would be able to create processes like so:
+    Unfortunately, because processes are allocated on the kernel heap, Rust
+    will not allow them to use closures instead of function pointers. It would
+    be nice if we could have each process contain a dynamically bound call
+    using the <code>FnOnce</code> trait (essentially a thunk), but
+    <code>FnOnce</code>'s <code>call</code> method moves the
+    <code>FnOnce</code> out of the process, which is not allowed because
+    process is heap allocated and has a destructor. There is an <a
+        href="https://github.com/rust-lang/rust/issues/28796">open RFC</a>
+    about the <code>Box<FnBox></code> constuct, which would allow the desired
+    behavior, but it is not working yet.  If this RFC was implemented, we would
+    be able to create processes like so:
     </p>
 
     <pre><code class="language-rust">
@@ -237,7 +269,7 @@
     </ol>
     </p>
 
-    <h1>Concurrency</h1>
+    <h1>Concurrency Control</h1>
 
     os1 uses preemptive multiprocessing via interrupts. os1 has two options for
     concurrency control (so far). The first is to simply turn off interrupts.
@@ -367,6 +399,158 @@
     abstractions to make drawing and printing strings easier. Including bounded boxes and
     word wrap.
     </p>
+
+    <h1>I/O</h1>
+
+    <h2>Keyboard</h2>
+
+    <p>
+    There is a simple keyboard-input mechanism. It mostly supports ASCII
+    alpha-numeric characters.
+    </p>
+
+    <h2>Block Devices</h2>
+
+    <p>
+    There is also very simple IDE support via PIO (the old fashion way). This
+    is used mostly to support the file system.
+    </p>
+
+    <h1>os1 File System (OFS)</h1>
+
+    <p>
+    Like IPC, this is one of my larger departures from the Unix world. OFS is a
+    simple, graph-based file system. It does not have directories. Every object
+    in OFS is a file. These files make up the nodes of a graph. They can be
+    linked together with bidirectional edges.
+    </p>
+
+    <p>
+    This FS wasn't designed to be completely practical, but rather for novelty.
+    I don't know of any such graph-based file system in the wild. There is a good
+    reason for this: graphs are pointer-based data structures by nature. Pointers
+    are the bane of file systems. Researchers make extravagent efforts to avoid
+    random disk accesses because they are super slow on hard disk drives. That said,
+    supposedly the random access penalty is not too bad on SSDs, so maybe this might
+    be practical in the future. Anyhow...
+    </p>
+
+    <p>
+    One file (inode #0) is designated as the "root" file. This is a bit of a
+    misnomer because the graph is not necessarily a tree; it can have cycles.
+    However, it does serve as a fixed point in the file system from which all
+    other files can be reached. A path is simply a slash-separated list of
+    filenames from the root to the destination.
+    </p>
+
+    <p>
+    For now, the file system is read-only. I still need to think about how to handle
+    consistency issues. However, for the purposes of documentation, I will describe
+    my end goals here.
+    </p>
+
+    <h2>API</h2>
+
+    <p>
+    OFS has a pretty straight-forward API. I might augment it for functionality later,
+    but the basics should be the same:
+    </p>
+
+    <table id="ofs-table">
+        <thead>
+            <tr>
+                <th>Operation</th>
+                <th>Functionality</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>stat</td>
+                <td>Returns a copy of the inode of the specified file. As described
+                below, from an inode, you can tell the metadata and links of a file.</td>
+            </tr>
+            <tr>
+                <td>new_file</td>
+                <td>Create a new file.</td>
+            </tr>
+            <tr>
+                <td>delete_file</td>
+                <td>Delete the file by removing all of its links and free its inode and
+                dnodes.</td>
+            </tr>
+            <tr>
+                <td>open</td>
+                <td>Open the file, returning a file handle.</td>
+            </tr>
+            <tr>
+                <td>link</td>
+                <td>Create a link between two files.</td>
+            </tr>
+            <tr>
+                <td>unlink</td>
+                <td>Remove the link between two files.</td>
+            </tr>
+            <tr>
+                <td>change_meta</td>
+                <td>Change the metadata of a file.</td>
+            </tr>
+            <tr>
+                <td>seek</td>
+                <td>Seek to the given location in the file.</td>
+            </tr>
+            <tr>
+                <td>read</td>
+                <td>Read from the file.</td>
+            </tr>
+            <tr>
+                <td>write</td>
+                <td>Write to the file.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Disk-level Representation</h2>
+
+    <p>
+    For simplicity, os1 treats the whole of hdd as a single partition. The
+    first sector contains file system metadata. For now, this consists of 4
+    magic bytes, the inode count, and the dnode count.  The next sectors
+    contain the inode and dnode bitmaps, in that order. The rest of the drive
+    contains the inodes and dnodes themselves.
+    </p>
+
+    <p>
+    Each inode represents a single file and contains the file metadata. This
+    includes the filename, permissions, dates modified and created, links, and
+    the dnode-number of the first dnode. The list of links can conclude with
+    the index of a dnode containing extra links.
+    </p>
+
+    <p>
+    Each dnode contains the contents of the file. The last word of the dnode is
+    the index of the next dnode.
+    </p>
+
+    <h2>OFS Troll</h2>
+
+    <p>
+    Deleting a file may disconnect the graph. If this happens, the portion
+    disconnected from the "root" needs to be deleted. This is the job of the OFS
+    Troll. The Troll is a process that does a breadth-first search from the root
+    searching for disconnected components.
+    </p>
+
+    <p>
+    Since the Troll is already going through all the inodes, it seems advantageous
+    to also have it function as a basic live fsck. I haven't really thought through
+    this too much yet.
+    </p>
+
+    <p>
+    (You might also be wondering why I called it a "Troll". Well, operating systems
+    already have "zombies" and "repears", so why not trolls?)
+    </p>
+
 </div>
 </body>
 </html>
