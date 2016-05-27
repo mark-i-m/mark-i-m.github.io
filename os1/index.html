@@ -37,15 +37,17 @@
     </p>
 
     <br />
-    <h2>Disk image available</h2>
+    <h2>Disk images available</h2>
 
     <p>
-    A disk image is available for those that want to just run the OS in QEMU
-    (<a href="os1.img">Download the disk image</a>). To boot, run this command.
-    You can replace <code>os1.img</code> with the actual path to the .img file:
+    Disk images are available for those that want to just run the OS in QEMU.
+    You will need two images: one to boot (<a href="os1.img">Click to
+        download</a>) and one with the filesystem.  (<a href="hdd.img">Click to
+        download</a>). To boot, run this command (adjusting the paths
+    appropriately):
     <br />
     <code>
-    qemu-system-x86_64 --serial mon:stdio -drive format=raw,file=os1.img,index=2,media=disk
+    qemu-system-i386 --serial mon:stdio -hdc kernel/kernel.img -hdd mkfs/hdd.img
     </code>
     </p>
 
@@ -65,13 +67,15 @@
         <li>Concurrency Control (via Semaphores)</li>
         <li>Primitive display driver (in VGA mode)</li>
         <li>Shared typed data structures</li>
+        <li>Basic support for IDE block devices and keyboard input</li>
+        <li>Read-only filesystem</li>
     </ul>
     </p>
 
     <p>
     TODO:
     <ul>
-        <li>File system</li>
+        <li>Writable File system</li>
         <li>User mode/system calls</li>
             <ul><li>Finish IPC API implementation</li></ul>
         <li>
