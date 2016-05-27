@@ -101,22 +101,16 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
-<span id="62">62</span>
-<span id="63">63</span>
-<span id="64">64</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for the reaper process, a process which frees the resources</span>
 <span class='doccomment'>//! of dead processes.</span>
 
 <span class='kw'>use</span> <span class='ident'>alloc</span>::<span class='ident'>boxed</span>::<span class='ident'>Box</span>;
 
-<span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>Process</span>, <span class='ident'>ready_queue</span>, <span class='ident'>ProcessQueue</span>};
-
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>proc_table</span>::<span class='ident'>PROCESS_TABLE</span>;
-
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>concurrency</span>::<span class='ident'>StaticSemaphore</span>;
-
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>sync</span>::<span class='ident'>StaticSemaphore</span>;
+<span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>Process</span>, <span class='ident'>ready_queue</span>, <span class='ident'>ProcessQueue</span>};
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>proc_table</span>::<span class='ident'>PROCESS_TABLE</span>;
 
 <span class='doccomment'>/// The reaper blocks onto this semaphore until enough have died</span>
 <span class='kw'>static</span> <span class='kw-2'>mut</span> <span class='ident'>REAPER_SEMAPHORE</span>: <span class='ident'>StaticSemaphore</span> <span class='op'>=</span> <span class='ident'>StaticSemaphore</span>::<span class='ident'>new</span>(<span class='number'>0</span>);

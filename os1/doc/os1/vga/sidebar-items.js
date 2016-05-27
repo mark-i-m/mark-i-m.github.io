@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["vga","A module for VGA buffer manipulation"],["window","A module for primitive window drawing"]]});
+initSidebarItems({"mod":[["input","A module for showing user input boxes"],["rectangle","A module for primitive rectangle drawing"],["vga","A module for VGA buffer manipulation"]]});

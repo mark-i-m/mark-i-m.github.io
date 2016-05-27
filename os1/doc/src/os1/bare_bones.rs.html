@@ -64,7 +64,6 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
-<span id="25">25</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! This module contains some basic functionality that libstd would normally</span>
 <span class='doccomment'>//! otherwise provide. Most importantly, it defines `rust_begin_unwind` which is</span>
@@ -73,8 +72,7 @@
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>fmt</span>;
 
 <span class='kw'>use</span> <span class='ident'>debug</span>::<span class='ident'>Debug</span>;
-
-<span class='kw'>use</span> <span class='ident'>machine</span>::{<span class='ident'>cli</span>};
+<span class='kw'>use</span> <span class='ident'>machine</span>::<span class='ident'>cli</span>;
 
 <span class='comment'>// For bare-bones rust</span>
 <span class='attribute'>#[<span class='ident'>lang</span> <span class='op'>=</span> <span class='string'>&quot;stack_exhausted&quot;</span>]</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>stack_exhausted</span>() {}

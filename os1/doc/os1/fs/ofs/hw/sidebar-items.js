@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["UNNAMED",""]],"struct":[["Dnode","A single OFS Dnode (512B)"],["Inode","A single OFS Inode (128B)"],["Metadata","The metadata sector of the partition"],["OFSDate","A 4B representation of the date for use in the OS"]]});

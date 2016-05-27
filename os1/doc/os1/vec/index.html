@@ -45,11 +45,20 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-42' class='srclink' href='../../src/os1/vec.rs.html#1-99' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-737' class='srclink' href='../../src/os1/vec.rs.html#1-264' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A simple vector implementation</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use alloc::raw_vec::<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/raw_vec/struct.RawVec.html' title='alloc::raw_vec::RawVec'>RawVec</a>;</code></td></tr><tr><td><code>use core::ops::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>};</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/ptr/index.html' title='core::ptr'>ptr</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use alloc::heap::EMPTY;</code></td></tr><tr><td><code>use alloc::raw_vec::<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/raw_vec/struct.RawVec.html' title='alloc::raw_vec::RawVec'>RawVec</a>;</code></td></tr><tr><td><code>use core::intrinsics::{<a class='fn' href='https://doc.rust-lang.org/nightly/core/intrinsics/fn.arith_offset.html' title='core::intrinsics::arith_offset'>arith_offset</a>, <a class='fn' href='https://doc.rust-lang.org/nightly/core/intrinsics/fn.assume.html' title='core::intrinsics::assume'>assume</a>};</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/mem/index.html' title='core::mem'>mem</a>;</code></td></tr><tr><td><code>use core::ops::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html' title='core::ops::Deref'>Deref</a>, <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.DerefMut.html' title='core::ops::DerefMut'>DerefMut</a>};</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/ptr/index.html' title='core::ptr'>ptr</a>;</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/slice/index.html' title='core::slice'>slice</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.IntoIter.html'
+                               title='os1::vec::IntoIter'>IntoIter</a></td>
+                        <td class='docblock short'>
+                             <p>An iterator that moves out of a vector modified from the stdlib</p>
+
+                        </td>
+                    </tr>
+                
                     <tr class=' module-item'>
                         <td><a class='struct' href='struct.Vec.html'
                                title='os1::vec::Vec'>Vec</a></td>

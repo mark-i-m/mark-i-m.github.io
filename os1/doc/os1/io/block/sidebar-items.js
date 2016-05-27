@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BlockDataBuffer","A data structure for use with block devices The buffer has an internal pointer that can be used for conveniently performing sequential writes or reads to the buffer.  Also, implementors of this trait must also implement `Drop`, preventing memory leaks."]],"trait":[["BlockDevice","An abstraction over block devices"]]});

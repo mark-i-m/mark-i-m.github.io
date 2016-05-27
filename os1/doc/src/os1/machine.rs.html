@@ -153,13 +153,12 @@
 <span id="111">111</span>
 <span id="112">112</span>
 <span id="113">113</span>
+<span id="114">114</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! This is the Rust-side handle for assembly code. Most of the FFI handles are</span>
 <span class='doccomment'>//! in this module.</span>
 
 <span class='attribute'>#[<span class='ident'>link</span>(<span class='ident'>name</span> <span class='op'>=</span> <span class='string'>&quot;asmcode&quot;</span>, <span class='ident'>repr</span><span class='op'>=</span><span class='string'>&quot;static&quot;</span>)]</span>
-
-<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>option</span>::<span class='prelude-ty'>Option</span>;
 
 <span class='kw'>use</span> <span class='ident'>process</span>::<span class='ident'>ProcessQueue</span>;
 
@@ -167,13 +166,16 @@
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
 <span class='kw'>extern</span> <span class='string'>&quot;C&quot;</span> {
     <span class='doccomment'>/// a wrapper around inb</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>inb</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='ident'>u8</span>; <span class='comment'>// if there are problems, change u8 to u32</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>inb</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='ident'>u8</span>;
 
     <span class='doccomment'>/// a wrapper around inl</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>inl</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='ident'>u32</span>;
 
     <span class='doccomment'>/// a wrapper around outb</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>outb</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>, <span class='ident'>val</span>: <span class='ident'>u8</span>);
+
+    <span class='doccomment'>/// a wrapper around outl</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>outl</span>(<span class='ident'>port</span>: <span class='ident'>u16</span>, <span class='ident'>val</span>: <span class='ident'>u32</span>);
 
     <span class='doccomment'>/// a wrapper around ltr</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>ltr</span>(<span class='ident'>tr</span>: <span class='ident'>usize</span>);

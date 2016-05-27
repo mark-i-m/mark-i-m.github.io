@@ -45,10 +45,11 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1720' class='srclink' href='../../src/os1/process/mod.rs.html#1-314' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2241' class='srclink' href='../../src/os1/process/mod.rs.html#1-377' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A module for process management</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use alloc::boxed::<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>;</code></td></tr><tr><td><code>use core::fmt::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>, <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a>};</code></td></tr><tr><td><code>use core::cmp::<a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a>;</code></td></tr><tr><td><code>use core::sync::atomic::{<a class='struct' href='https://doc.rust-lang.org/nightly/core/sync/atomic/struct.AtomicUsize.html' title='core::sync::atomic::AtomicUsize'>AtomicUsize</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/sync/atomic/enum.Ordering.html' title='core::sync::atomic::Ordering'>Ordering</a>};</code></td></tr><tr><td><code>use core::ops::<a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a>;</code></td></tr><tr><td><code>use super::static_linked_list::<a class='struct' href='../../os1/static_linked_list/struct.StaticLinkedList.html' title='os1::static_linked_list::StaticLinkedList'>StaticLinkedList</a>;</code></td></tr><tr><td><code>use super::interrupts::{<a class='fn' href='../../os1/interrupts/fn.on.html' title='os1::interrupts::on'>on</a>, <a class='fn' href='../../os1/interrupts/fn.off.html' title='os1::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::machine::{<a class='mod' href='../../os1/machine/index.html' title='os1::machine'>self</a>, <a class='fn' href='../../os1/machine/fn.context_switch.html' title='os1::machine::context_switch'>context_switch</a>};</code></td></tr><tr><td><code>use super::memory::{<a class='struct' href='../../os1/memory/struct.AddressSpace.html' title='os1::memory::AddressSpace'>AddressSpace</a>, <a class='fn' href='../../os1/memory/fn.esp0.html' title='os1::memory::esp0'>esp0</a>};</code></td></tr><tr><td><code>use self::context::{<a class='struct' href='../../os1/process/context/struct.KContext.html' title='os1::process::context::KContext'>KContext</a>};</code></td></tr><tr><td><code>use self::<a class='mod'
+<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use alloc::boxed::<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>;</code></td></tr><tr><td><code>use core::fmt::{<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>, <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a>};</code></td></tr><tr><td><code>use core::sync::atomic::{<a class='struct' href='https://doc.rust-lang.org/nightly/core/sync/atomic/struct.AtomicUsize.html' title='core::sync::atomic::AtomicUsize'>AtomicUsize</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/sync/atomic/enum.Ordering.html' title='core::sync::atomic::Ordering'>Ordering</a>};</code></td></tr><tr><td><code>use fs::ROOT_FS;</code></td></tr><tr><td><code>use interrupts::{<a class='fn' href='../../os1/interrupts/fn.esp0.html' title='os1::interrupts::esp0'>esp0</a>, <a class='fn' href='../../os1/interrupts/fn.on.html' title='os1::interrupts::on'>on</a>, <a class='fn' href='../../os1/interrupts/fn.off.html' title='os1::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use io::<a class='struct' href='../../os1/io/struct.NonBlockingBuffer.html' title='os1::io::NonBlockingBuffer'>NonBlockingBuffer</a>;</code></td></tr><tr><td><code>use machine::{<a class='mod' href='../../os1/machine/index.html' title='os1::machine'>self</a>, <a class='fn' href='../../os1/machine/fn.context_switch.html' title='os1::machine::context_switch'>context_switch</a>};</code></td></tr><tr><td><code>use memory::<a class='struct' href='../../os1/memory/struct.AddressSpace.html' title='os1::memory::AddressSpace'>AddressSpace</a>;</code></td></tr><tr><td><code>use static_linked_list::<a class='struct' href='../../os1/static_linked_list/struct.StaticLinkedList.html' title='os1::static_linked_list::StaticLinkedList'>StaticLinkedList</a>;</code></td></tr><tr><td><code>use self::<a class='mod'
+                                            href='./context/index.html'>context</a>::<a class='struct' href='../../os1/process/context/struct.KContext.html' title='os1::process::context::KContext'>KContext</a>;</code></td></tr><tr><td><code>use self::<a class='mod'
                                             href='./idle/index.html'>idle</a>::IDLE_PROCESS;</code></td></tr><tr><td><code>use self::<a class='mod'
                                             href='./proc_table/index.html'>proc_table</a>::PROCESS_TABLE;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
@@ -57,6 +58,15 @@
                                title='os1::process::context'>context</a></td>
                         <td class='docblock short'>
                              <p>A module for saving a process&#39;s context</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='focus/index.html'
+                               title='os1::process::focus'>focus</a></td>
+                        <td class='docblock short'>
+                             <p>A module for process focus</p>
 
                         </td>
                     </tr>
@@ -128,6 +138,15 @@ of dead processes.</p>
                     </tr>
                 </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.CF.html'
+                               title='os1::process::CF'>CF</a></td>
+                        <td class='docblock short'>
+                             <p>An enum representing change of directory</p>
+
+                        </td>
+                    </tr>
+                
                     <tr class=' module-item'>
                         <td><a class='enum' href='enum.State.html'
                                title='os1::process::State'>State</a></td>

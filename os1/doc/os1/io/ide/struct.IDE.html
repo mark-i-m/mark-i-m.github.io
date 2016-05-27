@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `IDE` struct in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, IDE">
+
+    <title>os1::io::ide::IDE - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>io</a>::<wbr><a href='index.html'>ide</a></p><script>window.sidebarCurrent = {name: 'IDE', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>io</a>::<wbr><a href='index.html'>ide</a>::<wbr><a class='struct' href=''>IDE</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1465' class='srclink' href='../../../src/os1/io/ide.rs.html#18-21' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct IDE {
+    drive: u16,
+    lock: <a class='struct' href='../../../os1/sync/struct.StaticSemaphore.html' title='os1::sync::StaticSemaphore'>StaticSemaphore</a>,
+}</pre><div class='docblock'><p>An abstraction of an IDE block device</p>
+</div><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.drive'><code>drive</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.lock'><code>lock</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../os1/io/ide/struct.IDE.html' title='os1::io::ide::IDE'>IDE</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(drive: u16) -&gt; <a class='struct' href='../../../os1/io/ide/struct.IDE.html' title='os1::io::ide::IDE'>IDE</a></code></h4>
+<h4 id='method.controller' class='method'><code>fn <a href='#method.controller' class='fnname'>controller</a>(&amp;self) -&gt; u16</code></h4>
+<div class='docblock'><p>Get the controller for the drive</p>
+</div><h4 id='method.channel' class='method'><code>fn <a href='#method.channel' class='fnname'>channel</a>(&amp;self) -&gt; u16</code></h4>
+<div class='docblock'><p>Get the channel for the drive</p>
+</div><h4 id='method.port' class='method'><code>fn <a href='#method.port' class='fnname'>port</a>(&amp;self) -&gt; u16</code></h4>
+<div class='docblock'><p>Get the port for the drive</p>
+</div><h4 id='method.get_status' class='method'><code>fn <a href='#method.get_status' class='fnname'>get_status</a>(&amp;self) -&gt; u8</code></h4>
+<div class='docblock'><p>Get the status of the drive. This
+is a bit mask of status flags.</p>
+</div><h4 id='method.is_busy' class='method'><code>fn <a href='#method.is_busy' class='fnname'>is_busy</a>(&amp;self) -&gt; bool</code></h4>
+<div class='docblock'><p>Return true if the drive is busy</p>
+</div><h4 id='method.is_ready' class='method'><code>fn <a href='#method.is_ready' class='fnname'>is_ready</a>(&amp;self) -&gt; bool</code></h4>
+<div class='docblock'><p>Return true if the drive is ready</p>
+</div><h4 id='method.wait_for_drive' class='method'><code>fn <a href='#method.wait_for_drive' class='fnname'>wait_for_drive</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Wait for the drive to become ready</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='../../../os1/io/block/trait.BlockDevice.html' title='os1::io::block::BlockDevice'>BlockDevice</a> for <a class='struct' href='../../../os1/io/ide/struct.IDE.html' title='os1::io::ide::IDE'>IDE</a></code></h3><div class='impl-items'><h4 id='method.get_block_size' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.get_block_size' class='fnname'>get_block_size</a>(&amp;self) -&gt; usize</code></h4>
+<h4 id='method.read_block' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.read_block' class='fnname'>read_block</a>(&amp;mut self, block_num: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h4>
+<h4 id='method.write_block' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.write_block' class='fnname'>write_block</a>(&amp;mut self, block_num: usize, buffer: &amp;<a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h4>
+<h4 id='method.read' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.read' class='fnname'>read</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) -&gt; usize</code></h4>
+<h4 id='method.write' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.write' class='fnname'>write</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) -&gt; usize</code></h4>
+<h4 id='method.read_fully' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.read_fully' class='fnname'>read_fully</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h4>
+<h4 id='method.write_fully' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.write_fully' class='fnname'>write_fully</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h4>
+<h4 id='method.read_exactly' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.read_exactly' class='fnname'>read_exactly</a>(&amp;mut self, offset: usize, bytes: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h4>
+<h4 id='method.write_exactly' class='method'><code>fn <a href='../../../os1/io/block/trait.BlockDevice.html#method.write_exactly' class='fnname'>write_exactly</a>(&amp;mut self, offset: usize, bytes: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>

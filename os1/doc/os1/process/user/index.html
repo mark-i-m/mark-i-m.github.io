@@ -45,10 +45,10 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1884' class='srclink' href='../../../src/os1/process/user.rs.html#1-172' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2414' class='srclink' href='../../../src/os1/process/user.rs.html#1-282' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A module for user processes</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/ptr/index.html' title='core::ptr'>ptr</a>;</code></td></tr><tr><td><code>use super::super::concurrency::{<a class='struct' href='../../../os1/concurrency/struct.Semaphore.html' title='os1::concurrency::Semaphore'>Semaphore</a>, <a class='struct' href='../../../os1/concurrency/struct.StaticSemaphore.html' title='os1::concurrency::StaticSemaphore'>StaticSemaphore</a>};</code></td></tr><tr><td><code>use super::super::vga::window::{<a class='struct' href='../../../os1/vga/window/struct.Window.html' title='os1::vga::window::Window'>Window</a>, <a class='enum' href='../../../os1/vga/vga/enum.Color.html' title='os1::vga::vga::Color'>Color</a>};</code></td></tr><tr><td><code>use super::<a class='struct' href='../../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a>;</code></td></tr><tr><td><code>use super::<a class='mod' href='../../../os1/process/ready_queue/index.html' title='os1::process::ready_queue'>ready_queue</a>;</code></td></tr><tr><td><code>use super::proc_table::PROCESS_TABLE;</code></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::fmt::<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Write.html' title='core::fmt::Write'>Write</a>;</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/ptr/index.html' title='core::ptr'>ptr</a>;</code></td></tr><tr><td><code>use io::block::<a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>;</code></td></tr><tr><td><code>use io::stream::<a class='trait' href='../../../os1/io/stream/trait.InputStream.html' title='os1::io::stream::InputStream'>InputStream</a>;</code></td></tr><tr><td><code>use fs::ROOT_FS;</code></td></tr><tr><td><code>use sync::{<a class='struct' href='../../../os1/sync/struct.Semaphore.html' title='os1::sync::Semaphore'>Semaphore</a>, <a class='struct' href='../../../os1/sync/struct.StaticSemaphore.html' title='os1::sync::StaticSemaphore'>StaticSemaphore</a>};</code></td></tr><tr><td><code>use vga::rectangle::{<a class='struct' href='../../../os1/vga/rectangle/struct.Rectangle.html' title='os1::vga::rectangle::Rectangle'>Rectangle</a>, <a class='enum' href='../../../os1/vga/rectangle/enum.Color.html' title='os1::vga::rectangle::Color'>Color</a>};</code></td></tr><tr><td><code>use vga::input::{<a class='trait' href='../../../os1/vga/input/trait.InputElement.html' title='os1::vga::input::InputElement'>InputElement</a>, <a class='struct' href='../../../os1/vga/input/struct.TextBox.html' title='os1::vga::input::TextBox'>TextBox</a>};</code></td></tr><tr><td><code>use super::<a class='struct' href='../../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a>;</code></td></tr><tr><td><code>use super::focus::<a class='fn' href='../../../os1/process/focus/fn.focus.html' title='os1::process::focus::focus'>focus</a>;</code></td></tr><tr><td><code>use super::<a class='mod' href='../../../os1/process/ready_queue/index.html' title='os1::process::ready_queue'>ready_queue</a>;</code></td></tr><tr><td><code>use super::proc_table::PROCESS_TABLE;</code></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='constant' href='constant.COLS.html'
@@ -135,6 +135,22 @@
                     <tr class=' module-item'>
                         <td><a class='fn' href='fn.run3.html'
                                title='os1::process::user::run3'>run3</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.run4.html'
+                               title='os1::process::user::run4'>run4</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.run5.html'
+                               title='os1::process::user::run5'>run5</a></td>
                         <td class='docblock short'>
                              
                         </td>

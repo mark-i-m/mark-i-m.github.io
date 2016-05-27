@@ -104,7 +104,7 @@
 <span class='doccomment'>//! switch in to kernel mode. The kernel context is saved</span>
 <span class='doccomment'>//! to the process struct when we context switch.</span>
 
-<span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>CURRENT_PROCESS</span>};
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>CURRENT_PROCESS</span>;
 
 <span class='doccomment'>/// A struct representing the contents of the general purpose registers</span>
 <span class='doccomment'>/// as produced by the `pusha` instruction.</span>

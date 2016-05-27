@@ -57,18 +57,22 @@
 <span id="15">15</span>
 <span id="16">16</span>
 <span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! This module contains everything needed for interrupts</span>
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>process</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
-
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>idt</span>::<span class='ident'>add_trap_handler</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>process</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>tss</span>::<span class='ident'>esp0</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>tss</span>::<span class='ident'>init</span> <span class='kw'>as</span> <span class='ident'>tss_init</span>;
+
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>pic</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>pit</span>;
 
 <span class='kw'>mod</span> <span class='ident'>idt</span>;
 <span class='kw'>mod</span> <span class='ident'>process</span>;
-
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>pit</span>;
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>pic</span>;
+<span class='kw'>mod</span> <span class='ident'>tss</span>;
 
 <span class='doccomment'>/// Initialize interrupts. Set the PIT frequency to `pit_hz`</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>(<span class='ident'>pit_hz</span>: <span class='ident'>usize</span>) {

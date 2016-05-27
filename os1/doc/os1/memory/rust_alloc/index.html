@@ -45,13 +45,13 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1051' class='srclink' href='../../../src/os1/memory/rust_alloc.rs.html#1-109' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1607' class='srclink' href='../../../src/os1/memory/rust_alloc.rs.html#1-119' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This module contains the outside interface with the kernels memory allocator.
 rustc will look for these functions.</p>
 
 <p>The comments below are copied from the rust src code</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use super::heap::{<a class='fn' href='../../../os1/memory/heap/fn.malloc.html' title='os1::memory::heap::malloc'>malloc</a>, <a class='fn' href='../../../os1/memory/heap/fn.free.html' title='os1::memory::heap::free'>free</a>, <a class='fn' href='../../../os1/memory/heap/fn.usable_size.html' title='os1::memory::heap::usable_size'>usable_size</a>, <a class='fn' href='../../../os1/memory/heap/fn.print_stats.html' title='os1::memory::heap::print_stats'>print_stats</a>};</code></td></tr><tr><td><code>use super::super::interrupts::{<a class='fn' href='../../../os1/interrupts/fn.on.html' title='os1::interrupts::on'>on</a>, <a class='fn' href='../../../os1/interrupts/fn.off.html' title='os1::interrupts::off'>off</a>};</code></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr><td><code>use core::prelude::<a class='mod' href='https://doc.rust-lang.org/nightly/core/prelude/v1/index.html' title='core::prelude::v1'>v1</a>::*;</code></td></tr><tr><td><code>use core::<a class='mod' href='https://doc.rust-lang.org/nightly/core/ptr/index.html' title='core::ptr'>ptr</a>;</code></td></tr><tr><td><code>use interrupts::{<a class='fn' href='../../../os1/interrupts/fn.on.html' title='os1::interrupts::on'>on</a>, <a class='fn' href='../../../os1/interrupts/fn.off.html' title='os1::interrupts::off'>off</a>};</code></td></tr><tr><td><code>use super::heap::{<a class='fn' href='../../../os1/memory/heap/fn.malloc.html' title='os1::memory::heap::malloc'>malloc</a>, <a class='fn' href='../../../os1/memory/heap/fn.free.html' title='os1::memory::heap::free'>free</a>, <a class='fn' href='../../../os1/memory/heap/fn.usable_size.html' title='os1::memory::heap::usable_size'>usable_size</a>, <a class='fn' href='../../../os1/memory/heap/fn.print_stats.html' title='os1::memory::heap::print_stats'>print_stats</a>};</code></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='fn' href='fn.__rust_allocate.html'

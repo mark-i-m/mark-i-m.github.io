@@ -214,24 +214,16 @@
 <span id="172">172</span>
 <span id="173">173</span>
 <span id="174">174</span>
-<span id="175">175</span>
-<span id="176">176</span>
-<span id="177">177</span>
-<span id="178">178</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module containing useful structs to abstract paging structures</span>
 
+<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>intrinsics</span>::<span class='ident'>transmute</span>;
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>ops</span>::{<span class='ident'>Index</span>, <span class='ident'>IndexMut</span>};
 
-<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>intrinsics</span>::<span class='ident'>transmute</span>;
-
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
-
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>physmem</span>::<span class='ident'>Frame</span>;
-
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>VMM_ON</span>;
-
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>process</span>::<span class='ident'>CURRENT_PROCESS</span>;
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>physmem</span>::<span class='ident'>Frame</span>;
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>VMM_ON</span>;
 
 <span class='doccomment'>/// A single entry in a page directory or table</span>
 <span class='doccomment'>/// ```</span>

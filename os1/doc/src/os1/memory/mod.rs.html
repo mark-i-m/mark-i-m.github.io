@@ -61,10 +61,6 @@
 <span id="19">19</span>
 <span id="20">20</span>
 <span id="21">21</span>
-<span id="22">22</span>
-<span id="23">23</span>
-<span id="24">24</span>
-<span id="25">25</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! This module contains everything that has to do with memory</span>
 <span class='doccomment'>//!</span>
@@ -74,19 +70,15 @@
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>vm</span>::{<span class='ident'>vmm_page_fault</span>, <span class='ident'>AddressSpace</span>};
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>tss</span>::<span class='ident'>esp0</span>;
-
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>rust_alloc</span>;
 
 <span class='kw'>mod</span> <span class='ident'>heap</span>;
-<span class='kw'>mod</span> <span class='ident'>tss</span>;
 <span class='kw'>mod</span> <span class='ident'>physmem</span>;
-<span class='kw'>mod</span> <span class='ident'>vm</span>;
 <span class='kw'>mod</span> <span class='ident'>regionmap</span>;
+<span class='kw'>mod</span> <span class='ident'>vm</span>;
 
 <span class='doccomment'>/// Initialize all memory subsystems</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>(<span class='ident'>kheap_start</span>: <span class='ident'>usize</span>, <span class='ident'>kheap_size</span>: <span class='ident'>usize</span>) {
-    <span class='ident'>tss</span>::<span class='ident'>init</span>();
     <span class='ident'>heap</span>::<span class='ident'>init</span>(<span class='ident'>kheap_start</span>, <span class='ident'>kheap_size</span>);
     <span class='ident'>physmem</span>::<span class='ident'>init</span>(<span class='ident'>kheap_start</span> <span class='op'>+</span> <span class='ident'>kheap_size</span>);
     <span class='ident'>vm</span>::<span class='ident'>init</span>(<span class='ident'>kheap_start</span> <span class='op'>+</span> <span class='ident'>kheap_size</span> <span class='op'>+</span> (<span class='number'>4</span><span class='op'>&lt;&lt;</span><span class='number'>20</span>));

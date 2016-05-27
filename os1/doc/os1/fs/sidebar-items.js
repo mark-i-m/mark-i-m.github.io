@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["init","Initialize the file system"]]});
+initSidebarItems({"fn":[["init","Initialize the root file system from the given device"]],"mod":[["error","A simple Error object for FS errors"],["ofs","A module for os1 FS (OFS)"]],"static":[["ROOT_FS",""]]});

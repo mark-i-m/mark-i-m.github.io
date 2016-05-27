@@ -151,11 +151,10 @@
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for programmable interrupt controller</span>
 
-<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>option</span>::<span class='prelude-ty'>Option</span>::<span class='prelude-val'>None</span>;
-
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>io</span>::<span class='ident'>kbd</span>::<span class='ident'>handler</span> <span class='kw'>as</span> <span class='ident'>kbd_handler</span>;
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::<span class='op'>*</span>;
-
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>idt</span>::<span class='ident'>add_interrupt_handler</span>;
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>pit</span>::<span class='ident'>handler</span> <span class='kw'>as</span> <span class='ident'>pit_handler</span>;
 
 <span class='doccomment'>/// Command port for PIC1</span>
 <span class='kw'>const</span> <span class='ident'>C1</span>: <span class='ident'>u16</span> <span class='op'>=</span> <span class='number'>0x20</span>;
@@ -237,9 +236,10 @@
 
     <span class='comment'>// execute handler</span>
     <span class='kw'>match</span> <span class='ident'>irq</span> {
-        <span class='number'>0</span>   <span class='op'>=&gt;</span> <span class='ident'>super</span>::<span class='ident'>pit</span>::<span class='ident'>handler</span>(),
-        <span class='number'>1</span>   <span class='op'>=&gt;</span> { } <span class='comment'>// keyboard</span>
+        <span class='number'>0</span>   <span class='op'>=&gt;</span> <span class='ident'>pit_handler</span>(), <span class='comment'>// PIT</span>
+        <span class='number'>1</span>   <span class='op'>=&gt;</span> <span class='ident'>kbd_handler</span>(), <span class='comment'>// keyboard</span>
         <span class='number'>13</span>  <span class='op'>=&gt;</span> { } <span class='comment'>// Processor, FPU</span>
+        <span class='number'>15</span>  <span class='op'>=&gt;</span> { } <span class='comment'>// IDE</span>
         _   <span class='op'>=&gt;</span> {
             <span class='kw'>unsafe</span> { <span class='ident'>cli</span>(); }
             <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;interrupt {}\n&quot;</span>,<span class='ident'>irq</span>)

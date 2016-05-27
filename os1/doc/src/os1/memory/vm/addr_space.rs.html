@@ -459,14 +459,16 @@
 <span id="417">417</span>
 <span id="418">418</span>
 <span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module process address spaces</span>
 
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>concurrency</span>::{<span class='ident'>Barrier</span>, <span class='ident'>Event</span>, <span class='ident'>StaticSemaphore</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>on</span>, <span class='ident'>off</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::{<span class='ident'>invlpg</span>, <span class='ident'>vmm_on</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>process</span>::{<span class='ident'>CURRENT_PROCESS</span>, <span class='ident'>State</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>process</span>::<span class='ident'>proc_table</span>::<span class='ident'>PROCESS_TABLE</span>;
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>sync</span>::{<span class='ident'>Barrier</span>, <span class='ident'>Event</span>, <span class='ident'>StaticSemaphore</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>physmem</span>::<span class='ident'>Frame</span>;
 <span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>SHARED_PDES</span>, <span class='ident'>NUM_SHARED</span>, <span class='ident'>PD_ADDRESS</span>, <span class='ident'>KMAP_ADDRESS</span>, <span class='ident'>USER_ADDRESS</span>, <span class='ident'>VMM_ON</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>structs</span>::{<span class='ident'>VMTable</span>, <span class='ident'>PagingEntry</span>};
@@ -762,9 +764,11 @@
 
         <span class='ident'>Frame</span>::<span class='ident'>share</span>( <span class='kw'>unsafe</span> {(<span class='op'>*</span><span class='ident'>CURRENT_PROCESS</span>).<span class='ident'>get_pid</span>()}, <span class='ident'>vaddr</span>, <span class='self'>self</span>.<span class='ident'>req_paddr</span>);
 
-        <span class='self'>self</span>.<span class='ident'>lock</span>.<span class='ident'>up</span>();
-
         <span class='self'>self</span>.<span class='ident'>req_wait</span>.<span class='ident'>notify</span>();
+
+        <span class='self'>self</span>.<span class='ident'>req_wait</span>.<span class='ident'>reset</span>();
+
+        <span class='self'>self</span>.<span class='ident'>lock</span>.<span class='ident'>up</span>();
 
         <span class='self'>self</span>.<span class='ident'>req_bar</span>.<span class='ident'>reach</span>();
 

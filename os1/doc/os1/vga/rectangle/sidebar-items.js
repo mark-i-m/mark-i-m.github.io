@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Color","Colors for VGA display"]],"struct":[["Rectangle","Ann abstraction for drawing text inside a bounded box"]]});

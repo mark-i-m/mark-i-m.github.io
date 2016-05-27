@@ -265,7 +265,6 @@
 <span id="223">223</span>
 <span id="224">224</span>
 <span id="225">225</span>
-<span id="226">226</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for the process table, a table mapping each PID to a process struct</span>
 
@@ -273,8 +272,7 @@
 
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>ops</span>::{<span class='ident'>Index</span>, <span class='ident'>IndexMut</span>};
 
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>concurrency</span>::<span class='ident'>StaticSemaphore</span>;
-
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>sync</span>::<span class='ident'>StaticSemaphore</span>;
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>Process</span>;
 
 <span class='doccomment'>/// The process table for the kernel</span>

@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1978' class='srclink' href='../../src/os1/process/mod.rs.html#66-92' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2567' class='srclink' href='../../src/os1/process/mod.rs.html#67-102' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Process {
     name: &amp;'static str,
     pid: usize,
@@ -55,6 +55,9 @@
     kcontext: <a class='struct' href='../../os1/process/context/struct.KContext.html' title='os1::process::context::KContext'>KContext</a>,
     pub addr_space: <a class='struct' href='../../os1/memory/struct.AddressSpace.html' title='os1::memory::AddressSpace'>AddressSpace</a>,
     pub disable_cnt: usize,
+    pub buffer: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../os1/io/struct.NonBlockingBuffer.html' title='os1::io::NonBlockingBuffer'>NonBlockingBuffer</a>&gt;,
+    pub cwf: usize,
+    pub path: <a class='struct' href='../../os1/static_linked_list/struct.StaticLinkedList.html' title='os1::static_linked_list::StaticLinkedList'>StaticLinkedList</a>&lt;usize&gt;,
 }</pre><div class='docblock'><p>Represents a single process, its identity, resources, etc.</p>
 </div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
@@ -75,6 +78,12 @@ kernel stack. This pointer is to the bottom of the stack, not the head.</p>
 </div></td></tr><tr class='stab '>
                                   <td id='structfield.disable_cnt'><code>disable_cnt</code></td><td><div class='docblock'><p>Number of calls to interrupts::on() while this process was running
 Interrupts are on if <code>disable_cnt == 0</code></p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.buffer'><code>buffer</code></td><td><div class='docblock'><p>A keyboard input buffer</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.cwf'><code>cwf</code></td><td><div class='docblock'><p>Current working file (inode number)</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.path'><code>path</code></td><td><div class='docblock'><p>Path taken to the cwf (a stack of inode #s), not including the cwf</p>
 </div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(name: &amp;'static str, run: fn(&amp;<a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a>) -&gt; usize) -&gt; *mut <a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a></code></h4>
 <div class='docblock'><p>Create a new process with the given name and routine. Because processes
 are a fundamental abstraction, they are too low level for me to use Rust well.
@@ -85,8 +94,18 @@ job of the caller to arrange for the process to be reaped.</p>
 </div><h4 id='method.set_state' class='method'><code>fn <a href='#method.set_state' class='fnname'>set_state</a>(&amp;mut self, s: <a class='enum' href='../../os1/process/enum.State.html' title='os1::process::State'>State</a>)</code></h4>
 <div class='docblock'><p>Set the state of the process to <code>s</code></p>
 </div><h4 id='method.get_state' class='method'><code>fn <a href='#method.get_state' class='fnname'>get_state</a>(&amp;self) -&gt; <a class='enum' href='../../os1/process/enum.State.html' title='os1::process::State'>State</a></code></h4>
-<h4 id='method.get_pid' class='method'><code>fn <a href='#method.get_pid' class='fnname'>get_pid</a>(&amp;self) -&gt; usize</code></h4>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Get the state of the process</p>
+</div><h4 id='method.get_pid' class='method'><code>fn <a href='#method.get_pid' class='fnname'>get_pid</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Get the PID of this process</p>
+</div><h4 id='method.accept_kbd' class='method'><code>fn <a href='#method.accept_kbd' class='fnname'>accept_kbd</a>(&amp;mut self, cap: usize)</code></h4>
+<div class='docblock'><p>Start accepting keyboard input when this process
+gains focussed. The buffer will have the capacity
+given.</p>
+</div><h4 id='method.cwf' class='method'><code>fn <a href='#method.cwf' class='fnname'>cwf</a>(&amp;self) -&gt; usize</code></h4>
+<div class='docblock'><p>Return the inode number of the current working file</p>
+</div><h4 id='method.cf' class='method'><code>fn <a href='#method.cf' class='fnname'>cf</a>(&amp;mut self, new_cwf: <a class='enum' href='../../os1/process/enum.CF.html' title='os1::process::CF'>CF</a>)</code></h4>
+<div class='docblock'><p>Change files to the given inode number if that file exists and is reachable from the cwf</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, other: &amp;<a class='struct' href='../../os1/process/struct.Process.html' title='os1::process::Process'>Process</a>) -&gt; bool</code></h4>
 <h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, other: &amp;Rhs) -&gt; bool</code></h4>

@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Color","Colors for VGA display"]],"struct":[["Window","The abstration of a window."]]});

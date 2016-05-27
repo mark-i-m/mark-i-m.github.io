@@ -105,8 +105,8 @@
 </pre><pre class='rust '>
 <span class='doccomment'>//! Module for cleanly turning interrupts on and off</span>
 
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>process</span>::{<span class='ident'>CURRENT_PROCESS</span>};
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::{<span class='ident'>cli</span>, <span class='ident'>sti</span>};
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>process</span>::<span class='ident'>CURRENT_PROCESS</span>;
 
 <span class='doccomment'>/// Turn interrupts on</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>on</span>() {

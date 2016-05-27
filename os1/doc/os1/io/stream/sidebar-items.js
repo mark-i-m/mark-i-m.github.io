@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["InputStream","A trait for input streams, streams that can be used to get input."],["OutputStream","A trait for output streams, streams that can be used to store output."]]});

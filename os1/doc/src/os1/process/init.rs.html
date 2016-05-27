@@ -58,21 +58,19 @@
 <span id="16">16</span>
 <span id="17">17</span>
 <span id="18">18</span>
-<span id="19">19</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for the init process</span>
 
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
 
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>vga</span>::<span class='ident'>window</span>::<span class='ident'>Window</span>;
-
+<span class='kw'>use</span> <span class='ident'>vga</span>::<span class='ident'>rectangle</span>::<span class='ident'>Rectangle</span>;
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>Process</span>;
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>ready_queue</span>;
 
 <span class='doccomment'>/// The init process routine</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>run</span>(<span class='ident'>this</span>: <span class='kw-2'>&amp;</span><span class='ident'>Process</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
     <span class='comment'>// clear the screen</span>
-    <span class='ident'>Window</span>::<span class='ident'>clear_screen</span>();
+    <span class='ident'>Rectangle</span>::<span class='ident'>clear_screen</span>();
 
     <span class='comment'>// start another process</span>
     <span class='ident'>ready_queue</span>::<span class='ident'>make_ready</span>(<span class='ident'>Process</span>::<span class='ident'>new</span>(<span class='string'>&quot;p0&quot;</span>, <span class='ident'>super</span>::<span class='ident'>user</span>::<span class='ident'>run</span>));

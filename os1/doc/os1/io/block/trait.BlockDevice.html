@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `BlockDevice` trait in crate `os1`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, BlockDevice">
+
+    <title>os1::io::block::BlockDevice - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>io</a>::<wbr><a href='index.html'>block</a></p><script>window.sidebarCurrent = {name: 'BlockDevice', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content trait">
+<h1 class='fqn'><span class='in-band'>Trait <a href='../../index.html'>os1</a>::<wbr><a href='../index.html'>io</a>::<wbr><a href='index.html'>block</a>::<wbr><a class='trait' href=''>BlockDevice</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1365' class='srclink' href='../../../src/os1/io/block.rs.html#19-154' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait BlockDevice {
+    fn <a href='#tymethod.get_block_size' class='fnname'>get_block_size</a>(&amp;self) -&gt; usize;
+    fn <a href='#tymethod.read_block' class='fnname'>read_block</a>(&amp;mut self, block_num: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>);
+    fn <a href='#tymethod.write_block' class='fnname'>write_block</a>(&amp;mut self, block_num: usize, buffer: &amp;<a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>);
+
+    fn <a href='#method.read' class='fnname'>read</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) -&gt; usize { ... }
+    fn <a href='#method.write' class='fnname'>write</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) -&gt; usize { ... }
+    fn <a href='#method.read_fully' class='fnname'>read_fully</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) { ... }
+    fn <a href='#method.write_fully' class='fnname'>write_fully</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) { ... }
+    fn <a href='#method.read_exactly' class='fnname'>read_exactly</a>(&amp;mut self, offset: usize, bytes: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) { ... }
+    fn <a href='#method.write_exactly' class='fnname'>write_exactly</a>(&amp;mut self, offset: usize, bytes: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) { ... }
+}</pre><div class='docblock'><p>An abstraction over block devices</p>
+</div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.get_block_size' class='method stab '><code>fn <a href='#tymethod.get_block_size' class='fnname'>get_block_size</a>(&amp;self) -&gt; usize</code></h3><div class='docblock'><p>Get the block size of this block device in bytes</p>
+</div><h3 id='tymethod.read_block' class='method stab '><code>fn <a href='#tymethod.read_block' class='fnname'>read_block</a>(&amp;mut self, block_num: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h3><div class='docblock'><p>Read the given block into the buffer</p>
+
+<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
+<p>The method panics if there is not enough space in the buffer</p>
+</div><h3 id='tymethod.write_block' class='method stab '><code>fn <a href='#tymethod.write_block' class='fnname'>write_block</a>(&amp;mut self, block_num: usize, buffer: &amp;<a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h3><div class='docblock'><p>Write the given block from the buffer</p>
+</div></div>
+            <h2 id='provided-methods'>Provided Methods</h2>
+            <div class='methods'>
+        <h3 id='method.read' class='method stab '><code>fn <a href='#method.read' class='fnname'>read</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) -&gt; usize</code></h3><div class='docblock'><p>Read from the block device at <code>offset</code> into the given buffer starting at the buffer&#39;s
+internal offset. This method will read no more data than will fit into the remaining space
+in the buffer, but it may also read less. It will update the buffer&#39;s offset, and return
+the number of bytes read.</p>
+</div><h3 id='method.write' class='method stab '><code>fn <a href='#method.write' class='fnname'>write</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>) -&gt; usize</code></h3><div class='docblock'><p>Write from the buffer to the disk starting at the buffer&#39;s internal offset. This may not
+write the whole buffer. This will update the buffer&#39;s offset, and return the number of
+bytes written.</p>
+</div><h3 id='method.read_fully' class='method stab '><code>fn <a href='#method.read_fully' class='fnname'>read_fully</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h3><div class='docblock'><p>Read from the block device at <code>offset</code> into the given buffer starting at the buffer&#39;s
+internal offset. This method will fill the remaining space in the buffer. It will update
+the buffer&#39;s offset.</p>
+
+<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
+<p>The method panics if there is not enough space in the buffer</p>
+</div><h3 id='method.write_fully' class='method stab '><code>fn <a href='#method.write_fully' class='fnname'>write_fully</a>(&amp;mut self, offset: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h3><div class='docblock'><p>Write from the buffer to the disk starting at the buffer&#39;s internal offset. This will
+write the whole buffer. This will update the buffer&#39;s offset.</p>
+</div><h3 id='method.read_exactly' class='method stab '><code>fn <a href='#method.read_exactly' class='fnname'>read_exactly</a>(&amp;mut self, offset: usize, bytes: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h3><div class='docblock'><p>Read <code>bytes</code> bytes from the block device at <code>offset</code> into the given buffer starting at the
+buffer&#39;s internal offset. This method will fill the remaining space in the buffer. It will
+update the buffer&#39;s offset.</p>
+
+<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
+<p>The method panics if there is not enough space in the buffer</p>
+</div><h3 id='method.write_exactly' class='method stab '><code>fn <a href='#method.write_exactly' class='fnname'>write_exactly</a>(&amp;mut self, offset: usize, bytes: usize, buffer: &amp;mut <a class='struct' href='../../../os1/io/block/struct.BlockDataBuffer.html' title='os1::io::block::BlockDataBuffer'>BlockDataBuffer</a>)</code></h3><div class='docblock'><p>Write <code>bytes</code> bytes to the block device at <code>offset</code> from the given buffer starting at the
+buffer&#39;s internal offset. This method will overwrite the existing disk contents. It will
+update the buffer&#39;s offset.</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl <a class='trait' href='../../../os1/io/block/trait.BlockDevice.html' title='os1::io::block::BlockDevice'>BlockDevice</a> for <a class='struct' href='../../../os1/io/ide/struct.IDE.html' title='os1::io::ide::IDE'>IDE</a></code></li>
+</ul><script type="text/javascript" async
+                              src="../../../implementors/os1/io/block/trait.BlockDevice.js">
+                      </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "os1";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>

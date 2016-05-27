@@ -147,10 +147,6 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module for virtual memory management</span>
 <span class='doccomment'>//!</span>
@@ -171,19 +167,15 @@
 <span class='doccomment'>//!    new page read/write</span>
 <span class='doccomment'>//! 3. Else, allocate a new frame a map the page to it</span>
 
-<span class='kw'>mod</span> <span class='ident'>structs</span>;
-<span class='kw'>mod</span> <span class='ident'>addr_space</span>;
-
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>addr_space</span>::{<span class='ident'>AddressSpace</span>, <span class='ident'>vmm_page_fault</span>};
 
+<span class='kw'>mod</span> <span class='ident'>addr_space</span>;
+<span class='kw'>mod</span> <span class='ident'>structs</span>;
+
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::<span class='ident'>add_trap_handler</span>;
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>machine</span>::<span class='ident'>page_fault_handler</span>;
-
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>interrupts</span>::{<span class='ident'>add_trap_handler</span>};
-
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>super</span>::<span class='ident'>static_linked_list</span>::<span class='ident'>StaticLinkedList</span>;
-
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>physmem</span>::<span class='ident'>Frame</span>;
-
 <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>structs</span>::{<span class='ident'>VMTable</span>, <span class='ident'>PagingEntry</span>};
 
 <span class='doccomment'>/// A list of shared PDEs direct mapping the beginning of memory</span>
